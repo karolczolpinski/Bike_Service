@@ -3,22 +3,36 @@
 {% block title %}Strona główna{% endblock %}
 
 {% block content %}
-    <h2>Welcome</h2>
-    <p>Main page testing</p>
-    <p>Simple project <strong>mainapp</strong>, distinct file <strong>urls.py</strong>, view <strong>home</strong> and templates <strong>base.html</strong> i <strong>home.html</strong>.</p>
 
-    <div class="stats">
-        <div class="card">
-            <h3>Registrations</h3>
-            <p>{{ liczba_zgloszen }}</p>
-        </div>
-        <div class="card">
-            <h3>Bikes</h3>
-            <p>{{ liczba_rowerow }}</p>
-        </div>
-        <div class="card">
-            <h3>Parts</h3>
-            <p>{{ liczba_czesci }}</p>
-        </div>
+<h2>Witamy w systemie serwisu rowerowego</h2>
+
+<p>
+    Aplikacja służy do obsługi klientów, rowerów,
+    zgłoszeń serwisowych oraz magazynu części.
+</p>
+
+<div class="stats">
+
+    <div class="card">
+        <h3>Użytkownicy</h3>
+        <p>{{ liczba_uzytkownikow }}</p>
     </div>
+
+    <div class="card">
+        <h3>Rowery</h3>
+        <p>{{ liczba_rowerow }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Zgłoszenia</h3>
+        <p>{{ liczba_zgloszen }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Części</h3>
+        <p>{{ liczba_czesci }}</p>
+    </div>
+
+</div>
+
 {% endblock %}
