@@ -1,11 +1,28 @@
-{% extends "base.html" %} {% block content %}
-<h2>Części</h2>
+{% extends "base.html" %}
 
-<ul>
-  {% for c in czesci %}
-  <li>{{ c.nazwa }} ({{ c.stan_magazynowy }})</li>
-  {% empty %}
-  <li>Brak danych</li>
-  {% endfor %}
-</ul>
+{% block title %}Części{% endblock %}
+
+{% block content %}
+<h2>Magazyn części</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Nazwa</th>
+        <th>Stan</th>
+        <th>Cena</th>
+    </tr>
+
+    {% for czesc in czesci %}
+    <tr>
+        <td>{{ czesc.nazwa }}</td>
+        <td>{{ czesc.stan_magazynowy }}</td>
+        <td>{{ czesc.cena }} zł</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3">Brak części</td>
+    </tr>
+    {% endfor %}
+</table>
+
 {% endblock %}
