@@ -5,7 +5,7 @@
 {% block content %}
 <h2>Zgłoszenia serwisowe</h2>
 
-<table border="1" cellpadding="10">
+<table>
     <tr>
         <th>Klient</th>
         <th>Rower</th>
@@ -18,7 +18,9 @@
         <td>{{ z.klient }}</td>
         <td>{{ z.rower }}</td>
         <td>{{ z.opis_usterki }}</td>
-        <td>{{ z.status }}</td>
+        <td>
+            <span class="badge">{{ z.status }}</span>
+        </td>
     </tr>
     {% empty %}
     <tr>
