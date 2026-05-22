@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Dodaj zgłoszenie{% endblock %}
+
+{% block content %}
+<h2>Dodaj zgłoszenie serwisowe</h2>
+
+<p>Wypełnij formularz, aby zarejestrować nową usterkę roweru.</p>
+
+<form method="post" class="form-box">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="actions">
+        <button type="submit" class="btn">Zapisz zgłoszenie</button>
+        <a href="{% url 'zgloszenia' %}" class="btn">Powrót do listy</a>
+    </div>
+</form>
+{% endblock %}
