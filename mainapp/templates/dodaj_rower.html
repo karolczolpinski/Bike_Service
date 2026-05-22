@@ -1,0 +1,15 @@
+{% extends "base.html" %} {% block title %}Dodaj rower{% endblock %} {% block
+content %}
+<h2>Dodaj rower</h2>
+
+<p>Wypełnij formularz, aby dodać nowy rower klienta do systemu.</p>
+
+<form method="post" class="form-box">
+  {% csrf_token %} {{ form.as_p }}
+
+  <div class="actions">
+    <button type="submit" class="btn">Zapisz rower</button>
+    <a href="{% url 'rowery' %}" class="btn">Powrót do listy</a>
+  </div>
+</form>
+{% endblock %}
