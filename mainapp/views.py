@@ -1,5 +1,7 @@
-from django.shortcuts import render
-from .models import Uzytkownik, Rower, Zgloszenie, Czesc
+from django.shortcuts import redirect, render
+
+from .forms import RowerForm, ZgloszenieForm
+from .models import Czesc, Rower, Uzytkownik, Zgloszenie
 
 
 def home(request):
@@ -12,14 +14,43 @@ def home(request):
 
     return render(request, 'home.html', context)
 
+
 def rowery(request):
     rowery = Rower.objects.all()
     return render(request, 'rowery.html', {'rowery': rowery})
+
 
 def zgloszenia(request):
     zgloszenia = Zgloszenie.objects.all()
     return render(request, 'zgloszenia.html', {'zgloszenia': zgloszenia})
 
+
 def czesci(request):
     czesci = Czesc.objects.all()
     return render(request, 'czesci.html', {'czesci': czesci})
+
+
+def dodaj_rower(request):
+    if request.method == 'POST':
+        form = RowerForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('rowery')
+    else:
+        form = RowerForm()
+
+    return render(request, 'dodaj_rower.html', {'form': form})
+
+
+def dodaj_zgloszenie(request):
+    if request.method == 'POST':
+        form = ZgloszenieForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('zgloszenia')
+    else:
+        form = ZgloszenieForm()
+
+    return render(request, 'dodaj_zgloszenie.html', {'form': form})
