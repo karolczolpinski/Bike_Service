@@ -237,3 +237,14 @@ class ProducentRoweru(models.Model):
     def __str__(self):
         return self.nazwa
         
+class TypRoweru(models.Model):
+    nazwa = models.CharField(max_length=50)
+    opis = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = "Typ roweru"
+        verbose_name_plural = "Typy rowerów"
+
+    def __str__(self):
+        return self.nazwa
+        
