@@ -259,3 +259,17 @@ class KategoriaCzesci(models.Model):
     def __str__(self):
         return self.nazwa
         
+class Dostawca(models.Model):
+    nazwa = models.CharField(max_length=100)
+    nip = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(max_length=100, blank=True)
+    telefon = models.CharField(max_length=20, blank=True)
+    adres = models.CharField(max_length=200, blank=True)
+
+    class Meta:
+        verbose_name = "Dostawca"
+        verbose_name_plural = "Dostawcy"
+
+    def __str__(self):
+        return self.nazwa
+        
