@@ -216,3 +216,62 @@ def dodaj_zgloszenie(request):
         form = ZgloszenieForm()
 
     return render(request, 'dodaj_zgloszenie.html', {'form': form})
+    
+@login_required
+def panel_klienta(request):
+    if not wymagaj_roli(request, ['klient', 'admin'], 'Dostęp tylko dla klienta.'):
+        return redirect('home')
+
+    uzytkownik = pobierz_uzytkownika_aplikacji(request)
+
+    if uzytkownik.rola == 'admin':
+        rowery = Rower.objects.all()
+        zgloszenia = Zgloszenie.objects.all()
+    else:
+        rowery = Rower.objects.filter(klient=uzytkownik)
+        zgloszenia = Zgloszenie.objects.filter(klient=uzytkownik)
+
+    context = {
+        'rowery': rowery,
+        'zgloszenia': zgloszenia,
+        'liczba_rowerow': rowery.count(),
+        'liczba_zgloszen': zgloszenia.count(),
+    }
+
+    return render(request, 'panel_klienta.html', context)
+
+
+@login_required
+def panel_mechanika(request):
+    if not wymagaj_roli(request, ['mechanik', 'admin'], 'Dostęp tylko dla mechanika.'):
+        return redirect('home')
+
+    uzytkownik = pobierz_uzytkownika_aplikacji(request)
+
+    if uzytkownik.rola == 'admin':
+        zlecenia = ZlecenieSerwisowe.objects.all()
+    else:
+        zlecenia = ZlecenieSerwisowe.objects.filter(mechanik=uzytkownik)
+
+    context = {
+        'zlecenia': zlecenia,
+        'liczba_zlecen': zlecenia.count(),
+        'zgloszenia_nowe': Zgloszenie.objects.filter(status='nowe'),
+    }
+
+    return render(request, 'panel_mechanika.html', context)
+
+
+@login_required
+def panel_magazyniera(request):
+    if not wymagaj_roli(request, ['magazynier', 'admin'], 'Dostęp tylko dla magazyniera.'):
+        return redirect('home')
+
+    context = {
+        'czesci': Czesc.objects.all(),
+        'zamowienia': ZamowienieCzesci.objects.all().order_by('-data_zamowienia')[:10],
+        'liczba_czesci': Czesc.objects.count(),
+        'czesci_niski_stan': Czesc.objects.filter(stan_magazynowy__lte=5),
+    }
+
+    return render(request, 'panel_magazyniera.html', context)
