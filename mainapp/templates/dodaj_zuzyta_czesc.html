@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Zarejestruj zużytą część{% endblock %}
+
+{% block content %}
+<h2>Zarejestruj zużytą część</h2>
+
+<p>
+    Formularz służy do zapisania części wykorzystanej podczas realizacji zlecenia.
+    Po zapisaniu stan magazynowy wybranej części zostanie zmniejszony.
+</p>
+
+<form method="post" class="form-box">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="actions">
+        <button type="submit" class="btn">Zapisz zużycie części</button>
+        <a href="{% url 'zlecenia' %}" class="btn">Powrót do zleceń</a>
+    </div>
+</form>
+{% endblock %}

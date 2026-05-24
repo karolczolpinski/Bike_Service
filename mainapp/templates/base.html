@@ -475,21 +475,6 @@
                     <a href="{% url 'panel_mechanika' %}">Panel mechanika</a>
                     <a href="{% url 'panel_magazyniera' %}">Panel magazyniera</a>
                     <a href="{% url 'panel_admin' %}">Panel admina</a>
-                    <a href="{% url 'panel_admin' %}">Panel admina</a>
-
-                    <div class="user-box">
-                        <span class="user-label">Zalogowano jako: <strong>{{ user.username }}</strong></span>
-
-                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="nav-button">Wyloguj</button>
-                        </form>
-                    </div>
-                {% else %}
-                    <div class="user-box">
-                        <a href="{% url 'login' %}">Logowanie</a>
-                        <a href="{% url 'rejestracja' %}">Rejestracja</a>
-                    </div>
                 {% endif %}
             </nav>
         </div>

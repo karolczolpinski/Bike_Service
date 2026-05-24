@@ -33,6 +33,7 @@ class UzytkownikAdmin(admin.ModelAdmin):
     list_display = ('imie', 'nazwisko', 'email', 'login', 'rola')
     list_filter = ('rola',)
     search_fields = ('imie', 'nazwisko', 'email', 'login')
+    readonly_fields = ('haslo',)
 
 
 @admin.register(Rower)

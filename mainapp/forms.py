@@ -15,15 +15,16 @@ from .models import (
 class RowerForm(forms.ModelForm):
     class Meta:
         model = Rower
-        fields = ['klient', 'marka', 'model', 'typ', 'numer_seryjny']
+        fields = ['klient', 'producent', 'typ_roweru', 'marka', 'model', 'typ', 'numer_seryjny']
         labels = {
             'klient': 'Klient',
+            'producent': 'Producent',
+            'typ_roweru': 'Typ roweru',
             'marka': 'Marka',
             'model': 'Model',
-            'typ': 'Typ roweru',
+            'typ': 'Typ',
             'numer_seryjny': 'Numer seryjny',
         }
-
 
 class ZgloszenieForm(forms.ModelForm):
     class Meta:

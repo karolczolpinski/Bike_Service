@@ -94,7 +94,7 @@ def rejestracja(request):
                     nazwisko=nazwisko,
                     email=email,
                     login=login_uzytkownika,
-                    haslo=haslo,
+                    haslo='Hasło przechowywane w Django Auth',
                     rola='klient',
                 )
 
@@ -153,7 +153,7 @@ def dodaj_uzytkownika(request):
                 nazwisko=nazwisko,
                 email=email,
                 login=login,
-                haslo=haslo,
+                haslo='Hasło przechowywane w Django Auth',
                 rola=rola,
             )
 
@@ -210,8 +210,15 @@ def dodaj_rower(request):
 
     uzytkownik = pobierz_uzytkownika_aplikacji(request)
 
+    if uzytkownik is None:
+        messages.error(request, 'Brak profilu użytkownika aplikacji.')
+        return redirect('home')
+
     if request.method == 'POST':
         form = RowerForm(request.POST)
+
+        if uzytkownik.rola == 'klient':
+            form.fields['klient'].required = False
 
         if form.is_valid():
             rower = form.save(commit=False)
@@ -230,7 +237,7 @@ def dodaj_rower(request):
             form.fields['klient'].disabled = True
 
     return render(request, 'dodaj_rower.html', {'form': form})
-
+    
 @login_required
 def dodaj_zgloszenie(request):
     if not wymagaj_roli(request, ['klient', 'admin'], 'Tylko klient lub admin może dodać zgłoszenie.'):
@@ -238,14 +245,24 @@ def dodaj_zgloszenie(request):
 
     uzytkownik = pobierz_uzytkownika_aplikacji(request)
 
+    if uzytkownik is None:
+        messages.error(request, 'Brak profilu użytkownika aplikacji.')
+        return redirect('home')
+
     if request.method == 'POST':
         form = ZgloszenieForm(request.POST)
+
+        if uzytkownik.rola == 'klient':
+            form.fields['klient'].required = False
+            form.fields['status'].required = False
+            form.fields['rower'].queryset = Rower.objects.filter(klient=uzytkownik)
 
         if form.is_valid():
             zgloszenie = form.save(commit=False)
 
             if uzytkownik.rola == 'klient':
                 zgloszenie.klient = uzytkownik
+                zgloszenie.status = 'nowe'
 
             zgloszenie.save()
             messages.success(request, 'Zgłoszenie zostało dodane.')
@@ -256,6 +273,10 @@ def dodaj_zgloszenie(request):
         if uzytkownik.rola == 'klient':
             form.fields['klient'].initial = uzytkownik
             form.fields['klient'].disabled = True
+
+            form.fields['status'].initial = 'nowe'
+            form.fields['status'].disabled = True
+
             form.fields['rower'].queryset = Rower.objects.filter(klient=uzytkownik)
 
     return render(request, 'dodaj_zgloszenie.html', {'form': form})
@@ -397,8 +418,22 @@ def dodaj_zuzyta_czesc(request):
         form = ZuzytaCzescForm(request.POST)
 
         if form.is_valid():
-            zuzyta_czesc = form.save()
+            zuzyta_czesc = form.save(commit=False)
             czesc = zuzyta_czesc.czesc
+
+            if zuzyta_czesc.ilosc <= 0:
+                messages.error(request, 'Ilość zużytych części musi być większa od zera.')
+                return render(request, 'dodaj_zuzyta_czesc.html', {'form': form})
+
+            if zuzyta_czesc.ilosc > czesc.stan_magazynowy:
+                messages.error(
+                    request,
+                    f'Brak wystarczającej liczby części w magazynie. Dostępne: {czesc.stan_magazynowy}.'
+                )
+                return render(request, 'dodaj_zuzyta_czesc.html', {'form': form})
+
+            zuzyta_czesc.save()
+
             czesc.stan_magazynowy -= zuzyta_czesc.ilosc
             czesc.save()
 
