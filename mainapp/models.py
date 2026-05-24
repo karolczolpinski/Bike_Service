@@ -225,3 +225,15 @@ class Kontakt(models.Model):
     def __str__(self):
         return f"{self.uzytkownik} - {self.telefon}"
         
+class ProducentRoweru(models.Model):
+    nazwa = models.CharField(max_length=100)
+    kraj = models.CharField(max_length=50, blank=True)
+    strona_www = models.URLField(max_length=200, blank=True)
+
+    class Meta:
+        verbose_name = "Producent roweru"
+        verbose_name_plural = "Producenci rowerów"
+
+    def __str__(self):
+        return self.nazwa
+        
