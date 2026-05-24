@@ -248,3 +248,14 @@ class TypRoweru(models.Model):
     def __str__(self):
         return self.nazwa
         
+class KategoriaCzesci(models.Model):
+    nazwa = models.CharField(max_length=100)
+    opis = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = "Kategoria części"
+        verbose_name_plural = "Kategorie części"
+
+    def __str__(self):
+        return self.nazwa
+        
