@@ -195,19 +195,21 @@ class Platnosc(models.Model):
         ('oplacona', 'Opłacona'),
         ('anulowana', 'Anulowana'),
     ]
-    
-    class Meta:
-        verbose_name = "Płatność"
-        verbose_name_plural = "Płatności"
-        
+
     zlecenie = models.ForeignKey(ZlecenieSerwisowe, on_delete=models.CASCADE, related_name='platnosci')
     kwota = models.DecimalField(max_digits=10, decimal_places=2)
     data_platnosci = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='oczekuje')
+    metoda_platnosci = models.CharField(max_length=30, default='gotowka')
+
+    class Meta:
+        verbose_name = "Płatność"
+        verbose_name_plural = "Płatności"
 
     def __str__(self):
-        return f'Płatność #{self.id}'
+        return f"Płatność #{self.id} - {self.kwota} zł"
         
+
 class Adres(models.Model):
     uzytkownik = models.ForeignKey(Uzytkownik, on_delete=models.CASCADE, related_name='adresy')
     ulica = models.CharField(max_length=100)
