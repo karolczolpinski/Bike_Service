@@ -14,7 +14,7 @@ class Uzytkownik(models.Model):
     email = models.EmailField(max_length=100, unique=True)
     login = models.CharField(max_length=50, unique=True)
     haslo = models.CharField(max_length=255)
-    rola = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    rola = models.CharField(max_length=20, choices=ROLE_CHOICES, default='klient')
 
     class Meta:
         verbose_name = 'Użytkownik'
