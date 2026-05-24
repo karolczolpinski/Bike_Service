@@ -1,7 +1,16 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from .models import Rower, Zgloszenie, Uzytkownik
+from .models import (
+    Rower,
+    Zgloszenie,
+    Uzytkownik,
+    Czesc,
+    Diagnoza,
+    RaportNaprawy,
+    ZuzytaCzesc,
+    ZamowienieCzesci,
+)
 
 class RowerForm(forms.ModelForm):
     class Meta:
@@ -103,3 +112,57 @@ class RejestracjaKlientaForm(forms.Form):
             raise forms.ValidationError('Podane hasła nie są takie same.')
 
         return cleaned_data
+        
+class CzescForm(forms.ModelForm):
+    class Meta:
+        model = Czesc
+        fields = ['kategoria', 'nazwa', 'stan_magazynowy', 'stan_minimalny', 'cena']
+        labels = {
+            'kategoria': 'Kategoria',
+            'nazwa': 'Nazwa części',
+            'stan_magazynowy': 'Stan magazynowy',
+            'stan_minimalny': 'Stan minimalny',
+            'cena': 'Cena',
+        }
+
+
+class DiagnozaForm(forms.ModelForm):
+    class Meta:
+        model = Diagnoza
+        fields = ['zlecenie', 'opis_diagnozy']
+        labels = {
+            'zlecenie': 'Zlecenie serwisowe',
+            'opis_diagnozy': 'Opis diagnozy',
+        }
+
+
+class RaportNaprawyForm(forms.ModelForm):
+    class Meta:
+        model = RaportNaprawy
+        fields = ['zlecenie', 'opis_czynnosci']
+        labels = {
+            'zlecenie': 'Zlecenie serwisowe',
+            'opis_czynnosci': 'Opis wykonanych czynności',
+        }
+
+
+class ZuzytaCzescForm(forms.ModelForm):
+    class Meta:
+        model = ZuzytaCzesc
+        fields = ['zlecenie', 'czesc', 'ilosc']
+        labels = {
+            'zlecenie': 'Zlecenie serwisowe',
+            'czesc': 'Część',
+            'ilosc': 'Ilość',
+        }
+
+
+class ZamowienieCzesciForm(forms.ModelForm):
+    class Meta:
+        model = ZamowienieCzesci
+        fields = ['dostawca', 'status', 'uwagi']
+        labels = {
+            'dostawca': 'Dostawca',
+            'status': 'Status',
+            'uwagi': 'Uwagi',
+        }
