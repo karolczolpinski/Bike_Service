@@ -203,3 +203,25 @@ class Adres(models.Model):
         return f"{self.ulica} {self.numer_budynku}, {self.miasto}"
 
 
+class Kontakt(models.Model):
+    PREFEROWANY_KONTAKT = [
+        ('telefon', 'Telefon'),
+        ('email', 'E-mail'),
+    ]
+
+    uzytkownik = models.ForeignKey(Uzytkownik, on_delete=models.CASCADE, related_name='kontakty')
+    telefon = models.CharField(max_length=20)
+    dodatkowy_email = models.EmailField(max_length=100, blank=True)
+    preferowany_kontakt = models.CharField(
+        max_length=20,
+        choices=PREFEROWANY_KONTAKT,
+        default='telefon'
+    )
+
+    class Meta:
+        verbose_name = "Kontakt"
+        verbose_name_plural = "Kontakty"
+
+    def __str__(self):
+        return f"{self.uzytkownik} - {self.telefon}"
+        
