@@ -20,4 +20,6 @@ urlpatterns = [
     path('czesci/', views.czesci, name='czesci'),
     
     path('panel-admin/uzytkownicy/dodaj/', views.dodaj_uzytkownika, name='dodaj_uzytkownika'),
+    
+    path('rejestracja/', views.rejestracja, name='rejestracja'),
 ]

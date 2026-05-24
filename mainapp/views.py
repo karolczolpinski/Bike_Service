@@ -3,7 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 
-from .forms import RowerForm, ZgloszenieForm, UzytkownikCreateForm
+from django.contrib.auth import login
+from django.db import transaction
+
+from .forms import RowerForm, ZgloszenieForm, UzytkownikCreateForm, RejestracjaKlientaForm
 from .models import Czesc, Rower, Uzytkownik, Zgloszenie
 
 
@@ -38,6 +41,45 @@ def home(request):
 
     return render(request, 'home.html', context)
 
+def rejestracja(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = RejestracjaKlientaForm(request.POST)
+
+        if form.is_valid():
+            imie = form.cleaned_data['imie']
+            nazwisko = form.cleaned_data['nazwisko']
+            email = form.cleaned_data['email']
+            login_uzytkownika = form.cleaned_data['login']
+            haslo = form.cleaned_data['haslo']
+
+            with transaction.atomic():
+                konto = User.objects.create_user(
+                    username=login_uzytkownika,
+                    password=haslo,
+                    email=email,
+                    first_name=imie,
+                    last_name=nazwisko,
+                )
+
+                Uzytkownik.objects.create(
+                    imie=imie,
+                    nazwisko=nazwisko,
+                    email=email,
+                    login=login_uzytkownika,
+                    haslo=haslo,
+                    rola='klient',
+                )
+
+            login(request, konto)
+            messages.success(request, 'Konto klienta zostało utworzone. Zostałeś zalogowany.')
+            return redirect('home')
+    else:
+        form = RejestracjaKlientaForm()
+
+    return render(request, 'rejestracja.html', {'form': form})
 
 @login_required
 def panel_admin(request):

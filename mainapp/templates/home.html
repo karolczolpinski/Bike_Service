@@ -18,7 +18,8 @@
                 <a href="{% url 'rowery' %}" class="btn btn-primary">Przejdź do rowerów</a>
                 <a href="{% url 'zgloszenia' %}" class="btn btn-secondary">Zobacz zgłoszenia</a>
             {% else %}
-                <a href="{% url 'login' %}" class="btn btn-primary">Zaloguj się do systemu</a>
+                <a href="{% url 'login' %}" class="btn btn-primary">Zaloguj się</a>
+                <a href="{% url 'rejestracja' %}" class="btn btn-secondary">Utwórz konto klienta</a>
             {% endif %}
         </div>
     </div>
@@ -41,6 +42,7 @@
             </p>
 
             <a href="{% url 'login' %}" class="btn">Logowanie</a>
+            <a href="{% url 'rejestracja' %}" class="btn btn-secondary">Rejestracja</a>
         {% endif %}
     </div>
 </section>

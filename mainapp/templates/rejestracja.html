@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Rejestracja klienta{% endblock %}
+
+{% block content %}
+<h2>Rejestracja klienta</h2>
+
+<p>
+    Utwórz konto klienta, aby móc dodawać rowery oraz zgłaszać usterki
+    do serwisu rowerowego.
+</p>
+
+<form method="post" class="form-box">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="actions">
+        <button type="submit" class="btn">Utwórz konto</button>
+        <a href="{% url 'login' %}" class="btn">Mam już konto</a>
+    </div>
+</form>
+{% endblock %}

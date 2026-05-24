@@ -63,3 +63,43 @@ class UzytkownikCreateForm(forms.Form):
             raise forms.ValidationError('Użytkownik aplikacji o takim adresie email już istnieje.')
 
         return email
+        
+class RejestracjaKlientaForm(forms.Form):
+    imie = forms.CharField(label='Imię', max_length=50)
+    nazwisko = forms.CharField(label='Nazwisko', max_length=50)
+    email = forms.EmailField(label='Email', max_length=100)
+    login = forms.CharField(label='Login', max_length=50)
+    haslo = forms.CharField(label='Hasło', widget=forms.PasswordInput)
+    powtorz_haslo = forms.CharField(label='Powtórz hasło', widget=forms.PasswordInput)
+
+    def clean_login(self):
+        login = self.cleaned_data['login']
+
+        if User.objects.filter(username=login).exists():
+            raise forms.ValidationError('Konto o takim loginie już istnieje.')
+
+        if Uzytkownik.objects.filter(login=login).exists():
+            raise forms.ValidationError('Użytkownik aplikacji o takim loginie już istnieje.')
+
+        return login
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('Konto o takim adresie email już istnieje.')
+
+        if Uzytkownik.objects.filter(email=email).exists():
+            raise forms.ValidationError('Użytkownik aplikacji o takim adresie email już istnieje.')
+
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        haslo = cleaned_data.get('haslo')
+        powtorz_haslo = cleaned_data.get('powtorz_haslo')
+
+        if haslo and powtorz_haslo and haslo != powtorz_haslo:
+            raise forms.ValidationError('Podane hasła nie są takie same.')
+
+        return cleaned_data
