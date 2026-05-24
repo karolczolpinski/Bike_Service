@@ -5,6 +5,7 @@ class Uzytkownik(models.Model):
     ROLE_CHOICES = [
         ('klient', 'Klient'),
         ('mechanik', 'Mechanik'),
+        ('magazynier', 'Magazynier'),
         ('admin', 'Admin'),
     ]
 
@@ -185,3 +186,20 @@ class Platnosc(models.Model):
 
     def __str__(self):
         return f'Płatność #{self.id}'
+        
+class Adres(models.Model):
+    uzytkownik = models.ForeignKey(Uzytkownik, on_delete=models.CASCADE, related_name='adresy')
+    ulica = models.CharField(max_length=100)
+    numer_budynku = models.CharField(max_length=10)
+    numer_lokalu = models.CharField(max_length=10, blank=True)
+    kod_pocztowy = models.CharField(max_length=10)
+    miasto = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name = "Adres"
+        verbose_name_plural = "Adresy"
+
+    def __str__(self):
+        return f"{self.ulica} {self.numer_budynku}, {self.miasto}"
+
+
