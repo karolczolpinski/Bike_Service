@@ -306,3 +306,16 @@ class PozycjaZamowienia(models.Model):
     def __str__(self):
         return f"{self.czesc} x {self.ilosc}"
         
+class HistoriaStatusu(models.Model):
+    zlecenie = models.ForeignKey(ZlecenieSerwisowe, on_delete=models.CASCADE, related_name='historia_statusow')
+    status = models.CharField(max_length=30)
+    data_zmiany = models.DateTimeField(auto_now_add=True)
+    komentarz = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = "Historia statusu"
+        verbose_name_plural = "Historie statusów"
+
+    def __str__(self):
+        return f"{self.zlecenie} - {self.status}"
+        
