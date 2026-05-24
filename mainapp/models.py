@@ -350,3 +350,17 @@ class TerminSerwisu(models.Model):
     def __str__(self):
         return f"Termin #{self.id} - {self.data_terminu}"
         
+
+class UslugaSerwisowa(models.Model):
+    nazwa = models.CharField(max_length=100)
+    opis = models.TextField(blank=True)
+    cena = models.DecimalField(max_digits=10, decimal_places=2)
+    czas_szacowany_minuty = models.PositiveIntegerField(default=30)
+
+    class Meta:
+        verbose_name = "Usługa serwisowa"
+        verbose_name_plural = "Usługi serwisowe"
+
+    def __str__(self):
+        return self.nazwa
+        
