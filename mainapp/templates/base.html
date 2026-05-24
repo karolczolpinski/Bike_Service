@@ -165,6 +165,19 @@
             color: #b91c1c;
             margin-bottom: 8px;
         }
+        
+        .nav-button {
+            background: none;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+}
+
+.nav-button:hover {
+    text-decoration: underline;
+}
     </style>
 </head>
 <body>
@@ -173,10 +186,19 @@
             <nav>
                 <a href="{% url 'home' %}">Strona główna</a> |
                 <a href="{% url 'rowery' %}">Rowery</a> |
-                <a href="{% url 'dodaj_rower' %}">Dodaj rower</a> |
                 <a href="{% url 'zgloszenia' %}">Zgłoszenia</a> |
-                <a href="{% url 'dodaj_zgloszenie' %}">Dodaj zgłoszenie</a>
                 <a href="{% url 'czesci' %}">Części</a>
+                
+                {% if user.is_authenticated %}
+                    <span>Zalogowano jako: {{ user.username }}</span>
+
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-button">Wyloguj</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Logowanie</a>
+                {% endif %}
             </nav>
         <hr>
     </header>
