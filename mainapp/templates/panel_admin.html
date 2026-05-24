@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Panel administratora{% endblock %}
+
+{% block content %}
+
+<h2>Panel administratora aplikacji</h2>
+
+<p>
+    Ten panel jest przeznaczony dla użytkownika z rolą <strong>admin</strong>
+    w systemie serwisu rowerowego.
+</p>
+
+<div class="stats">
+    <div class="card">
+        <h3>Użytkownicy</h3>
+        <p class="stat-number">{{ liczba_uzytkownikow }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Rowery</h3>
+        <p class="stat-number">{{ liczba_rowerow }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Zgłoszenia</h3>
+        <p class="stat-number">{{ liczba_zgloszen }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Części</h3>
+        <p class="stat-number">{{ liczba_czesci }}</p>
+    </div>
+</div>
+
+<h2 class="section-title">Zarządzanie systemem</h2>
+
+<div class="quick-grid">
+    <a href="{% url 'rowery' %}" class="quick-card">
+        <strong>Rowery</strong>
+        <span>Przegląd rowerów klientów.</span>
+    </a>
+
+    <a href="{% url 'zgloszenia' %}" class="quick-card">
+        <strong>Zgłoszenia</strong>
+        <span>Podgląd zgłoszeń serwisowych.</span>
+    </a>
+
+    <a href="{% url 'czesci' %}" class="quick-card">
+        <strong>Części</strong>
+        <span>Kontrola części dostępnych w systemie.</span>
+    </a>
+
+    <a href="{% url 'dodaj_rower' %}" class="quick-card">
+        <strong>Dodaj rower</strong>
+        <span>Dodanie roweru klienta.</span>
+    </a>
+
+    <a href="{% url 'dodaj_zgloszenie' %}" class="quick-card">
+        <strong>Dodaj zgłoszenie</strong>
+        <span>Rejestracja zgłoszenia serwisowego.</span>
+    </a>
+
+    <a href="/admin/" class="quick-card">
+        <strong>Django Admin</strong>
+        <span>Techniczny panel administracyjny Django.</span>
+    </a>
+    
+    <a href="{% url 'dodaj_uzytkownika' %}" class="quick-card">
+    	<strong>Dodaj użytkownika</strong>
+    	<span>Utwórz konto logowania oraz przypisz rolę w aplikacji.</span>
+	</a>
+</div>
+
+<h2 class="section-title">Użytkownicy aplikacji</h2>
+
+<table>
+    <tr>
+        <th>Imię</th>
+        <th>Nazwisko</th>
+        <th>Email</th>
+        <th>Login</th>
+        <th>Rola</th>
+    </tr>
+
+    {% for u in uzytkownicy %}
+    <tr>
+        <td>{{ u.imie }}</td>
+        <td>{{ u.nazwisko }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.login }}</td>
+        <td><span class="badge">{{ u.rola }}</span></td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5">Brak użytkowników aplikacji.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2 class="section-title">Ostatnie zgłoszenia</h2>
+
+<table>
+    <tr>
+        <th>Klient</th>
+        <th>Rower</th>
+        <th>Status</th>
+        <th>Data zgłoszenia</th>
+    </tr>
+
+    {% for z in ostatnie_zgloszenia %}
+    <tr>
+        <td>{{ z.klient }}</td>
+        <td>{{ z.rower }}</td>
+        <td><span class="badge">{{ z.status }}</span></td>
+        <td>{{ z.data_zgloszenia }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">Brak zgłoszeń.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

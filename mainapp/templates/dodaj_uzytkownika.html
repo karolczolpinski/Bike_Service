@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Dodaj użytkownika{% endblock %}
+
+{% block content %}
+<h2>Dodaj użytkownika</h2>
+
+<p>
+    Formularz tworzy jednocześnie konto logowania Django oraz użytkownika aplikacji
+    z wybraną rolą.
+</p>
+
+<form method="post" class="form-box">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="actions">
+        <button type="submit" class="btn">Utwórz użytkownika</button>
+        <a href="{% url 'panel_admin' %}" class="btn">Powrót do panelu</a>
+    </div>
+</form>
+{% endblock %}
