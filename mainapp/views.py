@@ -16,16 +16,19 @@ def home(request):
     return render(request, 'home.html', context)
 
 
+@login_required
 def rowery(request):
     rowery = Rower.objects.all()
     return render(request, 'rowery.html', {'rowery': rowery})
 
 
+@login_required
 def zgloszenia(request):
     zgloszenia = Zgloszenie.objects.all()
     return render(request, 'zgloszenia.html', {'zgloszenia': zgloszenia})
 
 
+@login_required
 def czesci(request):
     czesci = Czesc.objects.all()
     return render(request, 'czesci.html', {'czesci': czesci})
