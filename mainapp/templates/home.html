@@ -4,35 +4,113 @@
 
 {% block content %}
 
-<h2>Witamy w systemie serwisu rowerowego</h2>
+<section class="hero">
+    <div class="hero-main">
+        <h2>Profesjonalna obsługa serwisu rowerowego</h2>
+        <p>
+            System wspiera obsługę klientów, rowerów, zgłoszeń serwisowych,
+            pracy mechaników oraz magazynu części. Aplikacja została przygotowana
+            w Django z wykorzystaniem ORM oraz bazy PostgreSQL.
+        </p>
 
+        <div class="hero-actions">
+            {% if user.is_authenticated %}
+                <a href="{% url 'rowery' %}" class="btn btn-primary">Przejdź do rowerów</a>
+                <a href="{% url 'zgloszenia' %}" class="btn btn-secondary">Zobacz zgłoszenia</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary">Zaloguj się do systemu</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="login-panel">
+        {% if user.is_authenticated %}
+            <h3>Panel użytkownika</h3>
+            <p>Jesteś zalogowany jako:</p>
+            <p><span class="badge">{{ user.username }}</span></p>
+
+            <div class="actions">
+                <a href="{% url 'rowery' %}" class="btn">Rowery</a>
+                <a href="{% url 'zgloszenia' %}" class="btn">Zgłoszenia</a>
+            </div>
+        {% else %}
+            <h3>Dostęp do aplikacji</h3>
+            <p>
+                Aby przeglądać dane systemu oraz korzystać z formularzy,
+                zaloguj się na konto użytkownika.
+            </p>
+
+            <a href="{% url 'login' %}" class="btn">Logowanie</a>
+        {% endif %}
+    </div>
+</section>
+
+<h2 class="section-title">Dashboard systemu</h2>
 <p>
-    Aplikacja służy do obsługi klientów, rowerów,
-    zgłoszeń serwisowych oraz magazynu części.
+    Poniższe dane są pobierane bezpośrednio z bazy danych za pomocą Django ORM.
 </p>
 
 <div class="stats">
-
     <div class="card">
         <h3>Użytkownicy</h3>
-        <p>{{ liczba_uzytkownikow }}</p>
+        <p class="stat-number">{{ liczba_uzytkownikow }}</p>
     </div>
 
     <div class="card">
         <h3>Rowery</h3>
-        <p>{{ liczba_rowerow }}</p>
+        <p class="stat-number">{{ liczba_rowerow }}</p>
     </div>
 
     <div class="card">
         <h3>Zgłoszenia</h3>
-        <p>{{ liczba_zgloszen }}</p>
+        <p class="stat-number">{{ liczba_zgloszen }}</p>
     </div>
 
     <div class="card">
         <h3>Części</h3>
-        <p>{{ liczba_czesci }}</p>
+        <p class="stat-number">{{ liczba_czesci }}</p>
     </div>
-
 </div>
+
+{% if user.is_authenticated %}
+    <h2 class="section-title">Szybkie akcje</h2>
+    <p>Najważniejsze funkcje dostępne dla zalogowanego użytkownika.</p>
+
+    <div class="quick-grid">
+        <a href="{% url 'rowery' %}" class="quick-card">
+            <strong>Lista rowerów</strong>
+            <span>Przegląd rowerów zarejestrowanych w systemie.</span>
+        </a>
+
+        <a href="{% url 'zgloszenia' %}" class="quick-card">
+            <strong>Zgłoszenia serwisowe</strong>
+            <span>Podgląd zgłoszeń oraz ich aktualnych statusów.</span>
+        </a>
+
+        <a href="{% url 'czesci' %}" class="quick-card">
+            <strong>Magazyn części</strong>
+            <span>Lista części dostępnych w magazynie serwisu.</span>
+        </a>
+    </div>
+{% else %}
+    <h2 class="section-title">Zakres systemu</h2>
+
+    <div class="quick-grid">
+        <div class="quick-card">
+            <strong>Obsługa klientów</strong>
+            <span>Rejestrowanie rowerów i zgłoszeń serwisowych.</span>
+        </div>
+
+        <div class="quick-card">
+            <strong>Praca serwisu</strong>
+            <span>Diagnozy, raporty napraw oraz historia statusów.</span>
+        </div>
+
+        <div class="quick-card">
+            <strong>Magazyn części</strong>
+            <span>Kontrola stanów magazynowych i zużytych części.</span>
+        </div>
+    </div>
+{% endif %}
 
 {% endblock %}

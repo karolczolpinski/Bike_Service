@@ -4,116 +4,313 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Serwis rowerowy{% endblock %}</title>
+
     <style>
         * {
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #1f2937;
+            --primary-light: #374151;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             margin: 0;
-            background: #f4f6f8;
-            color: #1f2937;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
         }
 
         header {
-            background: #1f2937;
+            background: linear-gradient(135deg, #111827, #1f2937);
             color: white;
-            padding: 20px 40px;
+            padding: 22px 40px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
         }
 
-        header h1 {
-            margin: 0 0 15px 0;
+        .header-inner {
+            max-width: 1180px;
+            margin: 0 auto;
         }
 
-        nav a {
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .brand-title {
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 0.3px;
+        }
+
+        .brand-subtitle {
+            margin: 4px 0 0 0;
+            color: #d1d5db;
+            font-size: 14px;
+        }
+
+        nav {
+            margin-top: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        nav a,
+        .nav-button {
             color: white;
             text-decoration: none;
-            margin-right: 18px;
             font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.2s ease, transform 0.2s ease;
         }
 
-        nav a:hover {
-            text-decoration: underline;
+        nav a:hover,
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .user-box {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .user-label {
+            color: #d1d5db;
+            font-size: 14px;
         }
 
         main {
-            max-width: 1000px;
-            margin: 30px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            max-width: 1180px;
+            margin: 32px auto;
+            padding: 0 20px;
+        }
+
+        .page-card {
+            background: var(--card);
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+            border: 1px solid var(--border);
         }
 
         footer {
             text-align: center;
-            background: #1f2937;
-            color: white;
-            padding: 16px;
-            margin-top: 40px;
+            background: #111827;
+            color: #d1d5db;
+            padding: 18px;
+            margin-top: 50px;
+            font-size: 14px;
         }
 
         h2 {
             margin-top: 0;
-            color: #111827;
+            color: var(--text);
+            font-size: 28px;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+
+        p {
+            color: var(--muted);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 22px;
             background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         th {
             background: #eef2ff;
             color: #1f2937;
             text-align: left;
-            padding: 12px;
+            padding: 14px;
             border-bottom: 2px solid #d1d5db;
+            font-size: 14px;
         }
 
         td {
-            padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
         }
 
         tr:hover {
             background: #f9fafb;
         }
 
-        .stats {
+        .hero {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 24px;
+            align-items: stretch;
+            margin-bottom: 28px;
+        }
+
+        .hero-main {
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+            color: white;
+            padding: 32px;
+            border-radius: 18px;
+            min-height: 230px;
             display: flex;
-            gap: 16px;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-main h2 {
+            color: white;
+            margin-bottom: 12px;
+            font-size: 32px;
+        }
+
+        .hero-main p {
+            color: #e0ecff;
+            max-width: 720px;
+            margin-bottom: 22px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
             flex-wrap: wrap;
-            margin-top: 20px;
+        }
+
+        .login-panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        }
+
+        .login-panel h3 {
+            margin-bottom: 8px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(160px, 1fr));
+            gap: 16px;
+            margin-top: 22px;
         }
 
         .card {
-            flex: 1 1 180px;
-            background: #eef2ff;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 5px solid #4f46e5;
+            background: white;
+            padding: 22px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
         }
 
         .card h3 {
-            margin-top: 0;
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .stat-number {
+            font-size: 34px;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 0;
+        }
+
+        .section-title {
+            margin-top: 34px;
+            margin-bottom: 10px;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .quick-card {
+            display: block;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            text-decoration: none;
+            color: var(--text);
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .quick-card:hover {
+            background: #eff6ff;
+            transform: translateY(-2px);
+        }
+
+        .quick-card strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+
+        .quick-card span {
+            color: var(--muted);
+            font-size: 14px;
         }
 
         .badge {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 5px 11px;
             border-radius: 999px;
-            background: #e0e7ff;
-            color: #3730a3;
-            font-size: 14px;
+            background: var(--accent-light);
+            color: #1d4ed8;
+            font-size: 13px;
             font-weight: bold;
         }
-        
+
         .form-box {
-            max-width: 650px;
+            max-width: 680px;
             margin-top: 20px;
         }
 
@@ -125,16 +322,26 @@
             display: block;
             font-weight: bold;
             margin-bottom: 6px;
+            color: var(--text);
         }
 
         .form-box input,
         .form-box select,
         .form-box textarea {
             width: 100%;
-            padding: 10px;
+            padding: 11px 12px;
             border: 1px solid #d1d5db;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 14px;
+            background: white;
+        }
+
+        .form-box input:focus,
+        .form-box select:focus,
+        .form-box textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
         .form-box textarea {
@@ -143,72 +350,163 @@
 
         .btn {
             display: inline-block;
-            background: #1f2937;
+            background: var(--primary);
             color: white;
-            padding: 10px 18px;
+            padding: 11px 18px;
             border: none;
-            border-radius: 6px;
+            border-radius: 9px;
             text-decoration: none;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
+            transition: background 0.2s ease, transform 0.2s ease;
         }
 
         .btn:hover {
-            background: #374151;
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: white;
+            color: #1d4ed8;
+        }
+
+        .btn-primary:hover {
+            background: #eff6ff;
+        }
+
+        .btn-secondary {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .btn-secondary:hover {
+            background: #bfdbfe;
         }
 
         .actions {
             margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .errorlist {
-            color: #b91c1c;
+            color: var(--danger);
             margin-bottom: 8px;
-        }
-        
-        .nav-button {
-            background: none;
-            border: none;
-            color: white;
             font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-}
+        }
 
-.nav-button:hover {
-    text-decoration: underline;
-}
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #fee2e2;
+            color: #991b1b;
+            font-weight: bold;
+            border: 1px solid #fecaca;
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(160px, 1fr));
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-box {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 560px) {
+            header {
+                padding: 20px;
+            }
+
+            .page-card {
+                padding: 22px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-main {
+                padding: 24px;
+            }
+
+            .hero-main h2 {
+                font-size: 26px;
+            }
+        }
     </style>
 </head>
+
 <body>
     <header>
-        <h1>NAJLEPSZY System Serwisu Rowerowego 😎</h1>
-            <nav>
-                <a href="{% url 'home' %}">Strona główna</a> |
-                <a href="{% url 'rowery' %}">Rowery</a> |
-                <a href="{% url 'zgloszenia' %}">Zgłoszenia</a> |
-                <a href="{% url 'czesci' %}">Części</a>
-                
-                {% if user.is_authenticated %}
-                    <span>Zalogowano jako: {{ user.username }}</span>
+        <div class="header-inner">
+            <div class="brand">
+                <div>
+                    <h1 class="brand-title">System Serwisu Rowerowego</h1>
+                    <p class="brand-subtitle">Obsługa zgłoszeń, napraw, części i pracy serwisu</p>
+                </div>
+            </div>
 
-                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-button">Wyloguj</button>
-                    </form>
+            <nav>
+                <a href="{% url 'home' %}">Strona główna</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'rowery' %}">Rowery</a>
+                    <a href="{% url 'zgloszenia' %}">Zgłoszenia</a>
+                    <a href="{% url 'czesci' %}">Części</a>
+
+                    <div class="user-box">
+                        <span class="user-label">Zalogowano jako: <strong>{{ user.username }}</strong></span>
+
+                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-button">Wyloguj</button>
+                        </form>
+                    </div>
                 {% else %}
-                    <a href="{% url 'login' %}">Logowanie</a>
+                    <div class="user-box">
+                        <a href="{% url 'login' %}">Logowanie</a>
+                    </div>
                 {% endif %}
             </nav>
-        <hr>
+        </div>
     </header>
 
     <main>
-        {% block content %}{% endblock %}
+        <div class="page-card">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
     </main>
 
     <footer>
-        CCP - serwis 🚲
+        Projekt Django — System obsługi serwisu rowerowego
     </footer>
 </body>
 </html>
