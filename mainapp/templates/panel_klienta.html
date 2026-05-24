@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Panel klienta{% endblock %}
+
+{% block content %}
+<h2>Panel klienta</h2>
+
+<div class="stats">
+    <div class="card">
+        <h3>Moje rowery</h3>
+        <p class="stat-number">{{ liczba_rowerow }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Moje zgłoszenia</h3>
+        <p class="stat-number">{{ liczba_zgloszen }}</p>
+    </div>
+</div>
+
+<h2 class="section-title">Szybkie akcje</h2>
+
+<div class="quick-grid">
+    <a href="{% url 'dodaj_rower' %}" class="quick-card">
+        <strong>Dodaj rower</strong>
+        <span>Zarejestruj swój rower w systemie.</span>
+    </a>
+
+    <a href="{% url 'dodaj_zgloszenie' %}" class="quick-card">
+        <strong>Dodaj zgłoszenie</strong>
+        <span>Zgłoś usterkę roweru.</span>
+    </a>
+
+    <a href="{% url 'zgloszenia' %}" class="quick-card">
+        <strong>Moje zgłoszenia</strong>
+        <span>Sprawdź status napraw.</span>
+    </a>
+</div>
+{% endblock %}

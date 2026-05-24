@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Panel magazyniera{% endblock %}
+
+{% block content %}
+<h2>Panel magazyniera</h2>
+
+<div class="stats">
+    <div class="card">
+        <h3>Części</h3>
+        <p class="stat-number">{{ liczba_czesci }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Niski stan</h3>
+        <p class="stat-number">{{ czesci_niski_stan.count }}</p>
+    </div>
+</div>
+
+<h2 class="section-title">Szybkie akcje</h2>
+
+<div class="quick-grid">
+    <a href="{% url 'czesci' %}" class="quick-card">
+        <strong>Lista części</strong>
+        <span>Przegląd magazynu części.</span>
+    </a>
+
+    <a href="{% url 'dodaj_czesc' %}" class="quick-card">
+        <strong>Dodaj część</strong>
+        <span>Dodaj nową część do systemu.</span>
+    </a>
+
+    <a href="{% url 'zamowienia_czesci' %}" class="quick-card">
+        <strong>Zamówienia części</strong>
+        <span>Przegląd zamówień do dostawców.</span>
+    </a>
+
+    <a href="{% url 'dodaj_zamowienie_czesci' %}" class="quick-card">
+        <strong>Dodaj zamówienie</strong>
+        <span>Utwórz nowe zamówienie części.</span>
+    </a>
+</div>
+{% endblock %}

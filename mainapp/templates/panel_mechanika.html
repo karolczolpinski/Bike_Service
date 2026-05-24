@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Panel mechanika{% endblock %}
+
+{% block content %}
+<h2>Panel mechanika</h2>
+
+<div class="stats">
+    <div class="card">
+        <h3>Moje zlecenia</h3>
+        <p class="stat-number">{{ liczba_zlecen }}</p>
+    </div>
+</div>
+
+<h2 class="section-title">Szybkie akcje</h2>
+
+<div class="quick-grid">
+    <a href="{% url 'zlecenia' %}" class="quick-card">
+        <strong>Zlecenia</strong>
+        <span>Przegląd i obsługa zleceń serwisowych.</span>
+    </a>
+
+    <a href="{% url 'dodaj_diagnoze' %}" class="quick-card">
+        <strong>Dodaj diagnozę</strong>
+        <span>Wprowadź diagnozę usterki.</span>
+    </a>
+
+    <a href="{% url 'dodaj_raport' %}" class="quick-card">
+        <strong>Dodaj raport</strong>
+        <span>Opisz wykonane czynności.</span>
+    </a>
+
+    <a href="{% url 'dodaj_zuzyta_czesc' %}" class="quick-card">
+        <strong>Zużyta część</strong>
+        <span>Zarejestruj części użyte podczas naprawy.</span>
+    </a>
+</div>
+{% endblock %}
