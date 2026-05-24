@@ -1,14 +1,33 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 
 from django.contrib.auth import login
 from django.db import transaction
 
-from .forms import RowerForm, ZgloszenieForm, UzytkownikCreateForm, RejestracjaKlientaForm
-from .models import Czesc, Rower, Uzytkownik, Zgloszenie
-
+from .forms import (
+    RowerForm,
+    ZgloszenieForm,
+    UzytkownikCreateForm,
+    RejestracjaKlientaForm,
+    CzescForm,
+    DiagnozaForm,
+    RaportNaprawyForm,
+    ZuzytaCzescForm,
+    ZamowienieCzesciForm,
+)
+from .models import (
+    Czesc,
+    Diagnoza,
+    RaportNaprawy,
+    Rower,
+    Uzytkownik,
+    Zgloszenie,
+    ZlecenieSerwisowe,
+    ZuzytaCzesc,
+    ZamowienieCzesci,
+)
 
 def pobierz_uzytkownika_aplikacji(request):
     """
@@ -29,6 +48,12 @@ def czy_ma_role(request, dozwolone_role):
 
     return uzytkownik.rola in dozwolone_role
 
+def wymagaj_roli(request, dozwolone_role, komunikat='Brak uprawnień.'):
+    if not czy_ma_role(request, dozwolone_role):
+        messages.error(request, komunikat)
+        return False
+
+    return True
 
 def home(request):
     context = {
