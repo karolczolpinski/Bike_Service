@@ -408,3 +408,47 @@ def dodaj_zuzyta_czesc(request):
         form = ZuzytaCzescForm()
 
     return render(request, 'dodaj_zuzyta_czesc.html', {'form': form})
+    
+@login_required
+def dodaj_czesc(request):
+    if not wymagaj_roli(request, ['magazynier', 'admin'], 'Tylko magazynier lub admin może dodać część.'):
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = CzescForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Część została dodana.')
+            return redirect('czesci')
+    else:
+        form = CzescForm()
+
+    return render(request, 'dodaj_czesc.html', {'form': form})
+
+
+@login_required
+def zamowienia_czesci(request):
+    if not wymagaj_roli(request, ['magazynier', 'admin'], 'Brak dostępu do zamówień części.'):
+        return redirect('home')
+
+    zamowienia = ZamowienieCzesci.objects.all().order_by('-data_zamowienia')
+    return render(request, 'zamowienia_czesci.html', {'zamowienia': zamowienia})
+
+
+@login_required
+def dodaj_zamowienie_czesci(request):
+    if not wymagaj_roli(request, ['magazynier', 'admin'], 'Tylko magazynier lub admin może dodać zamówienie części.'):
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = ZamowienieCzesciForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Zamówienie części zostało dodane.')
+            return redirect('zamowienia_czesci')
+    else:
+        form = ZamowienieCzesciForm()
+
+    return render(request, 'dodaj_zamowienie_czesci.html', {'form': form})
