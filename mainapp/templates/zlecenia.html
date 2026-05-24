@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Zlecenia serwisowe{% endblock %}
+
+{% block content %}
+<h2>Zlecenia serwisowe</h2>
+
+<div class="actions">
+    <a href="{% url 'dodaj_diagnoze' %}" class="btn">Dodaj diagnozę</a>
+    <a href="{% url 'dodaj_raport' %}" class="btn">Dodaj raport</a>
+    <a href="{% url 'dodaj_zuzyta_czesc' %}" class="btn">Zużyta część</a>
+</div>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Zgłoszenie</th>
+        <th>Mechanik</th>
+        <th>Status</th>
+        <th>Data przyjęcia</th>
+        <th>Akcje</th>
+    </tr>
+
+    {% for z in zlecenia %}
+    <tr>
+        <td>{{ z.id }}</td>
+        <td>{{ z.zgloszenie }}</td>
+        <td>{{ z.mechanik }}</td>
+        <td><span class="badge">{{ z.status }}</span></td>
+        <td>{{ z.data_przyjecia }}</td>
+        <td>
+            <a href="{% url 'przyjmij_zlecenie' z.id %}" class="btn">Przyjmij</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">Brak zleceń.</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
