@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
 
 from .forms import RowerForm, ZgloszenieForm
 from .models import Czesc, Rower, Uzytkownik, Zgloszenie
@@ -30,6 +31,7 @@ def czesci(request):
     return render(request, 'czesci.html', {'czesci': czesci})
 
 
+@login_required
 def dodaj_rower(request):
     if request.method == 'POST':
         form = RowerForm(request.POST)
@@ -43,6 +45,7 @@ def dodaj_rower(request):
     return render(request, 'dodaj_rower.html', {'form': form})
 
 
+@login_required
 def dodaj_zgloszenie(request):
     if request.method == 'POST':
         form = ZgloszenieForm(request.POST)

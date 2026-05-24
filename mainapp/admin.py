@@ -83,10 +83,9 @@ class ZuzytaCzescAdmin(admin.ModelAdmin):
 
 @admin.register(Powiadomienie)
 class PowiadomienieAdmin(admin.ModelAdmin):
-    list_display = ('uzytkownik', 'zlecenie', 'data_wyslania', 'czy_przeczytane')
-    list_filter = ('czy_przeczytane', 'data_wyslania')
+    list_display = ('uzytkownik', 'zlecenie', 'data_wyslania')
+    list_filter = ('data_wyslania',)
     search_fields = ('tresc',)
-
 
 @admin.register(Magazyn)
 class MagazynAdmin(admin.ModelAdmin):
