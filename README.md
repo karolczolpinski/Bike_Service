@@ -1,185 +1,97 @@
-# System Serwisu Rowerowego
+# Bike Service Management System
 
-Aplikacja webowa wspierająca obsługę serwisu rowerowego. System umożliwia rejestrację klientów, dodawanie rowerów, tworzenie zgłoszeń serwisowych, obsługę zleceń przez mechaników, zarządzanie magazynem części oraz kontrolę płatności i powiadomień.
+A Django web application for managing a bicycle service workshop. The system supports customer registration, bicycle records, service requests, repair orders, spare parts inventory, payments, notifications, and service order status history.
 
-Projekt został wykonany w Django z wykorzystaniem Django ORM oraz bazy danych PostgreSQL.
-
----
-
-## Autorzy
+## Authors
 
 - Karol Czołpiński
-- [uzupełnij pozostałe osoby z grupy]
+- GC
+- KP
 
----
-
-## Technologie
+## Tech Stack
 
 - Python
 - Django
-- PostgreSQL
 - Django ORM
+- PostgreSQL
 - HTML / CSS
 - Django Templates
 
----
+Required packages:
 
-## Główne funkcjonalności
+```bash
+pip install django psycopg2-binary
+```
 
-System obsługuje cztery role użytkowników:
+## Features
 
-### Klient
+The system supports four roles:
 
-Klient może:
+- **Customer** — registers an account, adds bicycles, creates service requests, views own orders, notifications, payments, and status history.
+- **Mechanic** — handles assigned service orders, adds diagnoses, repair reports, used parts, and updates order statuses.
+- **Warehouse Manager** — manages spare parts, part orders, and order items.
+- **Application Administrator** — manages users, assigns roles, and has access to the application admin panel.
 
-- zarejestrować konto,
-- zalogować się do systemu,
-- dodać swój rower,
-- utworzyć zgłoszenie serwisowe,
-- przeglądać swoje rowery,
-- przeglądać swoje zgłoszenia,
-- przeglądać swoje zlecenia,
-- sprawdzać historię statusów,
-- sprawdzać powiadomienia,
-- sprawdzać płatności.
-
-### Mechanik
-
-Mechanik może:
-
-- przeglądać przypisane zlecenia,
-- przyjąć zlecenie do realizacji,
-- dodać diagnozę,
-- dodać raport naprawy,
-- zarejestrować zużytą część,
-- zmienić status zlecenia,
-- przeglądać części.
-
-### Magazynier
-
-Magazynier może:
-
-- przeglądać części,
-- dodawać części,
-- przeglądać zamówienia części,
-- dodawać zamówienia części,
-- dodawać pozycje zamówienia.
-
-### Administrator aplikacji
-
-Administrator aplikacji może:
-
-- korzystać z panelu administratora aplikacji,
-- dodawać użytkowników i nadawać im role,
-- przeglądać dane systemu,
-- zarządzać głównymi obszarami aplikacji.
-
-Dodatkowo dostępny jest techniczny panel Django Admin pod adresem:
+The technical Django Admin panel is available at:
 
 ```text
 /admin/
 ```
 
-Panel Django Admin służy do technicznego zarządzania danymi, modelami oraz użytkownikami Django.
-
----
-
-## Główne adresy aplikacji
+## Main Routes
 
 ```text
-/                                  strona główna
-/login/                            logowanie
-/logout/                           wylogowanie
-/rejestracja/                      publiczna rejestracja klienta
+/                                  home page
+/login/                            login
+/logout/                           logout
+/rejestracja/                      customer registration
 
-/panel-klienta/                    panel klienta
-/panel-mechanika/                  panel mechanika
-/panel-magazyniera/                panel magazyniera
-/panel-admin/                      panel administratora aplikacji
+/panel-klienta/                    customer panel
+/panel-mechanika/                  mechanic panel
+/panel-magazyniera/                warehouse manager panel
+/panel-admin/                      application administrator panel
 
-/rowery/                           lista rowerów
-/rowery/dodaj/                     dodawanie roweru
-
-/zgloszenia/                       lista zgłoszeń
-/zgloszenia/dodaj/                 dodawanie zgłoszenia
-
-/zlecenia/                         lista zleceń
-/zlecenia/<id>/                    szczegóły zlecenia
-/zlecenia/<id>/status/             zmiana statusu zlecenia
-/zlecenia/przyjmij/<id>/           przyjęcie zlecenia
-
-/diagnozy/dodaj/                   dodawanie diagnozy
-/raporty/dodaj/                    dodawanie raportu naprawy
-/zuzyte-czesci/dodaj/              rejestrowanie zużytej części
-
-/czesci/                           lista części
-/czesci/dodaj/                     dodawanie części
-
-/zamowienia-czesci/                lista zamówień części
-/zamowienia-czesci/dodaj/          dodawanie zamówienia części
-/pozycje-zamowienia/dodaj/         dodawanie pozycji zamówienia
-
-/powiadomienia/                    lista powiadomień
-/platnosci/                        lista płatności
-/platnosci/dodaj/                  dodawanie płatności
+/rowery/                           bicycles
+/zgloszenia/                       service requests
+/zlecenia/                         service orders
+/czesci/                           spare parts
+/powiadomienia/                    notifications
+/platnosci/                        payments
 ```
 
----
+## Data Model
 
-## Model danych
-
-Projekt zawiera 25 encji:
-
-1. `Uzytkownik`
-2. `Rower`
-3. `Zgloszenie`
-4. `ZlecenieSerwisowe`
-5. `Diagnoza`
-6. `RaportNaprawy`
-7. `Czesc`
-8. `ZuzytaCzesc`
-9. `Powiadomienie`
-10. `Magazyn`
-11. `Platnosc`
-12. `Adres`
-13. `Kontakt`
-14. `ProducentRoweru`
-15. `TypRoweru`
-16. `KategoriaCzesci`
-17. `Dostawca`
-18. `ZamowienieCzesci`
-19. `PozycjaZamowienia`
-20. `HistoriaStatusu`
-21. `TerminSerwisu`
-22. `StanowiskoSerwisowe`
-23. `UslugaSerwisowa`
-24. `WykonanaUsluga`
-25. `NotatkaSerwisowa`
-
-Relacje pomiędzy encjami zostały odwzorowane za pomocą Django ORM, głównie przez pola `ForeignKey`.
-
-Przykładowe relacje:
+The project contains 25 entities:
 
 ```text
-Uzytkownik 1 --- wiele Rower
-Uzytkownik 1 --- wiele Zgloszenie
-Rower 1 --- wiele Zgloszenie
-Zgloszenie 1 --- wiele ZlecenieSerwisowe
-ZlecenieSerwisowe 1 --- wiele Diagnoza
-ZlecenieSerwisowe 1 --- wiele RaportNaprawy
-ZlecenieSerwisowe 1 --- wiele ZuzytaCzesc
-ZlecenieSerwisowe 1 --- wiele HistoriaStatusu
-Czesc 1 --- wiele ZuzytaCzesc
-KategoriaCzesci 1 --- wiele Czesc
-Dostawca 1 --- wiele ZamowienieCzesci
-ZamowienieCzesci 1 --- wiele PozycjaZamowienia
+Uzytkownik, Rower, Zgloszenie, ZlecenieSerwisowe, Diagnoza,
+RaportNaprawy, Czesc, ZuzytaCzesc, Powiadomienie, Magazyn,
+Platnosc, Adres, Kontakt, ProducentRoweru, TypRoweru,
+KategoriaCzesci, Dostawca, ZamowienieCzesci, PozycjaZamowienia,
+HistoriaStatusu, TerminSerwisu, StanowiskoSerwisowe,
+UslugaSerwisowa, WykonanaUsluga, NotatkaSerwisowa
 ```
 
----
+The database structure is implemented with Django ORM. Relationships are mainly based on `ForeignKey` fields.
 
-## Statusy zlecenia serwisowego
+Key relationships:
 
-Zlecenie serwisowe może mieć status:
+```text
+Uzytkownik 1 --- many Rower
+Uzytkownik 1 --- many Zgloszenie
+Rower 1 --- many Zgloszenie
+Zgloszenie 1 --- many ZlecenieSerwisowe
+ZlecenieSerwisowe 1 --- many Diagnoza
+ZlecenieSerwisowe 1 --- many RaportNaprawy
+ZlecenieSerwisowe 1 --- many ZuzytaCzesc
+ZlecenieSerwisowe 1 --- many HistoriaStatusu
+Czesc 1 --- many ZuzytaCzesc
+ZamowienieCzesci 1 --- many PozycjaZamowienia
+```
+
+## Service Order Workflow
+
+Available service order statuses:
 
 ```text
 nowe
@@ -191,396 +103,134 @@ zakonczone
 anulowane
 ```
 
-Każda ważna zmiana statusu zapisuje wpis w encji `HistoriaStatusu` oraz generuje powiadomienie dla klienta.
-
-Przykładowy proces:
+Main workflow:
 
 ```text
-Klient dodaje zgłoszenie
-→ system tworzy zlecenie o statusie "nowe"
-→ mechanik przyjmuje zlecenie
-→ status zmienia się na "w_realizacji"
-→ mechanik dodaje diagnozę
-→ status zmienia się na "diagnoza"
-→ mechanik rejestruje zużytą część
-→ status zmienia się na "naprawa"
-→ mechanik dodaje raport naprawy
-→ status zmienia się na "gotowe"
+Customer creates a service request
+→ system creates a service order
+→ mechanic accepts the order
+→ mechanic adds a diagnosis
+→ mechanic registers used parts
+→ mechanic adds a repair report
+→ customer can view status history and notifications
 ```
 
----
+Each important status change creates a `HistoriaStatusu` record and sends a notification to the customer.
 
-## Instalacja lokalna
+## Local Setup
 
-### 1. Sklonowanie projektu
+### 1. Create and activate a virtual environment
 
-```bash
-git clone <adres_repozytorium>
-cd Service
-```
-
-### 2. Utworzenie środowiska wirtualnego
-
-Na macOS/Linux:
+macOS/Linux:
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-Na Windowsie:
+Windows:
 
 ```powershell
 py -m venv venv
 venv\Scripts\Activate.ps1
 ```
 
-### 3. Instalacja zależności
-
-```bash
-pip install -r requirements.txt
-```
-
-Jeżeli plik `requirements.txt` jest pusty lub nieaktualny, można odtworzyć zależności lokalnie:
+### 2. Install packages
 
 ```bash
 pip install django psycopg2-binary
-pip freeze > requirements.txt
 ```
 
----
+### 3. Configure PostgreSQL
 
-## Konfiguracja PostgreSQL
-
-Projekt korzysta z bazy PostgreSQL.
-
-Przykładowa konfiguracja lokalna:
+Default local database configuration:
 
 ```text
-DB_NAME: serwis_rowerowy
-DB_USER: serwis_user
-DB_PASSWORD: serwis123
-DB_HOST: localhost
-DB_PORT: 5432
+Database: serwis_rowerowy
+User: serwis_user
+Password: serwis123
+Host: localhost
+Port: 5432
 ```
 
-### Utworzenie bazy i użytkownika
-
-Wejdź do PostgreSQL jako użytkownik administracyjny, np.:
+Create the database:
 
 ```bash
 psql -U postgres
 ```
 
-Następnie wykonaj:
-
 ```sql
 CREATE USER serwis_user WITH PASSWORD 'serwis123';
 CREATE DATABASE serwis_rowerowy OWNER serwis_user;
 GRANT ALL PRIVILEGES ON DATABASE serwis_rowerowy TO serwis_user;
-```
 
-Po wejściu do bazy:
-
-```sql
 \c serwis_rowerowy
 GRANT ALL ON SCHEMA public TO serwis_user;
 ALTER SCHEMA public OWNER TO serwis_user;
-```
-
-Wyjście z konsoli PostgreSQL:
-
-```sql
 \q
 ```
 
----
-
-## Migracje bazy danych
-
-Po skonfigurowaniu bazy uruchom:
+### 4. Run migrations
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
----
-
-## Utworzenie superusera Django
-
-Superuser służy do logowania do technicznego panelu Django Admin:
+### 5. Create a Django superuser
 
 ```bash
 python manage.py createsuperuser
 ```
 
-Panel Django Admin:
-
-```text
-http://127.0.0.1:8000/admin/
-```
-
----
-
-## Uruchomienie aplikacji
+### 6. Run the server
 
 ```bash
 python manage.py runserver
 ```
 
-Aplikacja będzie dostępna pod adresem:
+Application:
 
 ```text
 http://127.0.0.1:8000/
 ```
 
----
-
-## Konta użytkowników
-
-W projekcie występują dwa poziomy użytkowników:
-
-### 1. Użytkownik Django
-
-Znajduje się w sekcji:
+Django Admin:
 
 ```text
-Uwierzytelnianie i autoryzacja → Użytkownicy
+http://127.0.0.1:8000/admin/
 ```
 
-Służy do:
+## User Accounts
+
+The project uses two user layers:
+
+- **Django User** — authentication, passwords, sessions, Django Admin access.
+- **Application User (`Uzytkownik`)** — business data and role-based access.
+
+For role-based access to work correctly:
 
 ```text
-logowania,
-haseł,
-sesji,
-panelu Django Admin.
+Django User username = Uzytkownik login
 ```
 
-### 2. Użytkownik aplikacji
+Public registration creates customer accounts only. Employee and administrator accounts are created by the application administrator.
 
-Znajduje się w modelu:
+## Test Scenario
 
 ```text
-MAINAPP → Użytkownicy
+1. Customer registers an account.
+2. Customer adds a bicycle.
+3. Customer creates a service request.
+4. System automatically creates a service order.
+5. Mechanic accepts the order.
+6. Mechanic adds a diagnosis.
+7. Mechanic registers used parts.
+8. Mechanic adds a repair report.
+9. Customer views status history and notifications.
+10. Administrator adds a payment.
 ```
 
-Służy do:
+## Security Notes
 
-```text
-roli użytkownika,
-powiązania z rowerami,
-powiązania ze zgłoszeniami,
-powiązania ze zleceniami.
-```
-
-Warunek poprawnego działania ról:
-
-```text
-Django User username = MAINAPP Uzytkownik login
-```
-
-Przykład:
-
-```text
-Django username: jkowalski
-MAINAPP login: jkowalski
-Rola: klient
-```
-
----
-
-## Rejestracja klienta
-
-Klient może samodzielnie utworzyć konto pod adresem:
-
-```text
-/rejestracja/
-```
-
-Formularz tworzy:
-
-```text
-konto Django do logowania,
-użytkownika aplikacji z rolą klient.
-```
-
-Użytkownik rejestrujący się publicznie zawsze otrzymuje rolę:
-
-```text
-klient
-```
-
-Role pracowników i administratorów są nadawane przez administratora aplikacji.
-
----
-
-## Panel administratora aplikacji
-
-Panel administratora aplikacji jest dostępny pod adresem:
-
-```text
-/panel-admin/
-```
-
-Dostęp ma użytkownik, który:
-
-```text
-jest zalogowany,
-ma konto Django,
-ma odpowiadający rekord w MAINAPP Uzytkownik,
-ma rolę admin.
-```
-
-Administrator aplikacji może dodawać nowych użytkowników przez:
-
-```text
-/panel-admin/uzytkownicy/dodaj/
-```
-
-Formularz tworzy jednocześnie:
-
-```text
-konto Django,
-użytkownika aplikacji z wybraną rolą.
-```
-
----
-
-## Dane testowe
-
-Przykładowe role użytkowników:
-
-```text
-Klient:
-login: jkowalski
-
-Mechanik:
-login: pzielinski
-
-Magazynier:
-login: mnowak
-
-Administrator aplikacji:
-login: adminapp
-```
-
-Przykładowe dane do systemu:
-
-```text
-Typ roweru:
-MTB, Szosowy, Gravel, Miejski
-
-Kategorie części:
-Hamulce, Napęd, Koła, Opony
-
-Producent roweru:
-Kross, Trek, Giant
-
-Przykładowa część:
-Klocki hamulcowe Shimano B05S
-Stan magazynowy: 12
-Stan minimalny: 3
-Cena: 49.99
-```
-
----
-
-## Sprawdzenie działania
-
-Po uruchomieniu aplikacji warto przetestować proces:
-
-```text
-1. Klient rejestruje konto.
-2. Klient dodaje rower.
-3. Klient dodaje zgłoszenie.
-4. System automatycznie tworzy zlecenie serwisowe.
-5. Klient otrzymuje powiadomienie.
-6. Mechanik przyjmuje zlecenie.
-7. Mechanik dodaje diagnozę.
-8. Mechanik rejestruje zużytą część.
-9. Stan magazynowy części zostaje zmniejszony.
-10. Mechanik dodaje raport naprawy.
-11. Status zlecenia zmienia się na gotowe.
-12. Klient widzi historię statusów i powiadomienia.
-13. Administrator dodaje płatność.
-14. Klient widzi płatność.
-```
-
----
-
-## Przygotowanie do wdrożenia
-
-Przed wrzuceniem projektu na GitHub lub serwer nie należy dodawać:
-
-```text
-venv/
-.git/
-db.sqlite3
-__pycache__/
-*.pyc
-.env
-staticfiles/
-.DS_Store
-__MACOSX/
-```
-
-Plik `.gitignore` powinien zawierać:
-
-```text
-venv/
-__pycache__/
-*.pyc
-db.sqlite3
-.env
-.DS_Store
-staticfiles/
-__MACOSX/
-```
-
-Przed wdrożeniem należy również upewnić się, że `requirements.txt` nie jest pusty:
-
-```bash
-pip freeze > requirements.txt
-```
-
----
-
-## Uwagi dotyczące bezpieczeństwa
-
-Hasła użytkowników są przechowywane przez wbudowany system Django Auth. Model `Uzytkownik` przechowuje rolę i dane biznesowe użytkownika, ale nie powinien przechowywać jawnego hasła użytkownika.
-
-W projekcie pole `haslo` w modelu `Uzytkownik` pełni funkcję techniczną/historyczną, natomiast właściwe logowanie realizowane jest przez `auth.User`.
-
----
-
-## Status projektu
-
-Aktualny zakres projektu obejmuje:
-
-```text
-25 encji w modelu danych,
-logowanie i wylogowanie,
-publiczną rejestrację klienta,
-role użytkowników,
-panele dla ról,
-formularze dla klientów, mechaników, magazynierów i admina,
-historię statusów,
-powiadomienia,
-płatności,
-zamówienia części,
-walidację zużycia części,
-estetyczny interfejs użytkownika.
-```
-
-Projekt jest przygotowany do dalszego rozszerzenia o:
-
-```text
-Docker,
-wdrożenie na zewnętrzny serwer,
-generowanie PDF,
-wykresy,
-testy automatyczne,
-procedury/funkcje/triggery PostgreSQL.
-```
+Authentication is handled by Django Auth. Passwords are stored by Django in hashed form. The `Uzytkownik` model is used for business data and roles, not for real password authentication.
