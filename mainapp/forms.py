@@ -133,7 +133,7 @@ class UzytkownikCreateForm(forms.Form):
 
         return email
         
-        def clean_imie(self):
+    def clean_imie(self):
         return validate_person_name(self.cleaned_data.get('imie', ''), 'Imię')
 
     def clean_nazwisko(self):
@@ -204,7 +204,7 @@ class RejestracjaKlientaForm(forms.Form):
 
         return cleaned_data
         
-        def clean_imie(self):
+    def clean_imie(self):
         return validate_person_name(self.cleaned_data.get('imie', ''), 'Imię')
 
     def clean_nazwisko(self):
