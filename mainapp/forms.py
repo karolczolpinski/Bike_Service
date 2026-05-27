@@ -16,6 +16,9 @@ from .models import (
     ZlecenieSerwisowe,
     Adres,
     Kontakt,
+    NotatkaSerwisowa,
+    TerminSerwisu,
+    WykonanaUsluga,
 )
 
 POLISH_NAME_PATTERN = re.compile(r'^[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\-\s]+$')
@@ -384,3 +387,40 @@ class KontaktForm(forms.ModelForm):
 
         return telefon
         
+class NotatkaSerwisowaForm(forms.ModelForm):
+    class Meta:
+        model = NotatkaSerwisowa
+        fields = ['tresc']
+        labels = {
+            'tresc': 'Treść notatki',
+        }
+
+
+class TerminSerwisuForm(forms.ModelForm):
+    class Meta:
+        model = TerminSerwisu
+        fields = ['stanowisko', 'data_terminu', 'opis']
+        labels = {
+            'stanowisko': 'Stanowisko',
+            'data_terminu': 'Data terminu',
+            'opis': 'Opis',
+        }
+
+
+class WykonanaUslugaForm(forms.ModelForm):
+    class Meta:
+        model = WykonanaUsluga
+        fields = ['usluga', 'ilosc', 'cena_wykonania']
+        labels = {
+            'usluga': 'Usługa',
+            'ilosc': 'Ilość',
+            'cena_wykonania': 'Cena wykonania',
+        }
+
+    def clean_ilosc(self):
+        ilosc = self.cleaned_data.get('ilosc')
+
+        if ilosc <= 0:
+            raise forms.ValidationError('Ilość musi być większa od zera.')
+
+        return ilosc

@@ -51,4 +51,8 @@ urlpatterns = [
     path('moje-dane/', views.moje_dane, name='moje_dane'),
     path('moje-dane/adres/', views.edytuj_adres, name='edytuj_adres'),
     path('moje-dane/kontakt/', views.edytuj_kontakt, name='edytuj_kontakt'),
+    
+    path('zlecenia/<int:zlecenie_id>/notatka/dodaj/', views.dodaj_notatke_serwisowa, name='dodaj_notatke_serwisowa'),
+    path('zlecenia/<int:zlecenie_id>/termin/dodaj/', views.dodaj_termin_serwisu, name='dodaj_termin_serwisu'),
+    path('zlecenia/<int:zlecenie_id>/usluga/dodaj/', views.dodaj_wykonana_usluga, name='dodaj_wykonana_usluga'),
 ]

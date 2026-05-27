@@ -23,6 +23,9 @@ from .forms import (
     StatusZleceniaForm,
     AdresForm,
     KontaktForm,
+    NotatkaSerwisowaForm,
+    TerminSerwisuForm,
+    WykonanaUslugaForm,
 )
 
 from .models import (
@@ -42,6 +45,9 @@ from .models import (
     PozycjaZamowienia,
     Adres,
     Kontakt,
+    NotatkaSerwisowa,
+    TerminSerwisu,
+    WykonanaUsluga,
 )
 
 def pobierz_uzytkownika_aplikacji(request):
@@ -794,3 +800,113 @@ def edytuj_kontakt(request):
         'tytul': 'Edytuj kontakt',
         'przycisk': 'Zapisz kontakt',
     })
+    
+def pobierz_zlecenie_dla_mechanika_lub_admina(request, zlecenie_id):
+    zlecenie = get_object_or_404(ZlecenieSerwisowe, id=zlecenie_id)
+    uzytkownik = pobierz_uzytkownika_aplikacji(request)
+
+    if uzytkownik is None:
+        messages.error(request, 'Brak profilu użytkownika aplikacji.')
+        return None, None
+
+    if uzytkownik.rola == 'admin':
+        return zlecenie, uzytkownik
+
+    if uzytkownik.rola == 'mechanik' and zlecenie.mechanik == uzytkownik:
+        return zlecenie, uzytkownik
+
+    messages.error(request, 'Nie masz dostępu do tego zlecenia.')
+    return None, uzytkownik
+    
+@login_required
+def dodaj_notatke_serwisowa(request, zlecenie_id):
+    if not wymagaj_roli(request, ['mechanik', 'admin'], 'Tylko mechanik lub admin może dodać notatkę.'):
+        return redirect('home')
+
+    zlecenie, uzytkownik = pobierz_zlecenie_dla_mechanika_lub_admina(request, zlecenie_id)
+
+    if zlecenie is None:
+        return redirect('zlecenia')
+
+    if request.method == 'POST':
+        form = NotatkaSerwisowaForm(request.POST)
+
+        if form.is_valid():
+            notatka = form.save(commit=False)
+            notatka.zlecenie = zlecenie
+            notatka.autor = uzytkownik
+            notatka.save()
+
+            messages.success(request, 'Notatka serwisowa została dodana.')
+            return redirect('szczegoly_zlecenia', zlecenie_id=zlecenie.id)
+    else:
+        form = NotatkaSerwisowaForm()
+
+    return render(request, 'formularz.html', {
+        'form': form,
+        'tytul': f'Dodaj notatkę do zlecenia #{zlecenie.id}',
+        'przycisk': 'Zapisz notatkę',
+    })
+    
+@login_required
+def dodaj_termin_serwisu(request, zlecenie_id):
+    if not wymagaj_roli(request, ['mechanik', 'admin'], 'Tylko mechanik lub admin może dodać termin.'):
+        return redirect('home')
+
+    zlecenie, uzytkownik = pobierz_zlecenie_dla_mechanika_lub_admina(request, zlecenie_id)
+
+    if zlecenie is None:
+        return redirect('zlecenia')
+
+    if request.method == 'POST':
+        form = TerminSerwisuForm(request.POST)
+
+        if form.is_valid():
+            termin = form.save(commit=False)
+            termin.zlecenie = zlecenie
+            termin.save()
+
+            messages.success(request, 'Termin serwisu został dodany.')
+            return redirect('szczegoly_zlecenia', zlecenie_id=zlecenie.id)
+    else:
+        form = TerminSerwisuForm()
+
+    return render(request, 'formularz.html', {
+        'form': form,
+        'tytul': f'Dodaj termin do zlecenia #{zlecenie.id}',
+        'przycisk': 'Zapisz termin',
+    })
+    
+@login_required
+def dodaj_wykonana_usluga(request, zlecenie_id):
+    if not wymagaj_roli(request, ['mechanik', 'admin'], 'Tylko mechanik lub admin może dodać wykonaną usługę.'):
+        return redirect('home')
+
+    zlecenie, uzytkownik = pobierz_zlecenie_dla_mechanika_lub_admina(request, zlecenie_id)
+
+    if zlecenie is None:
+        return redirect('zlecenia')
+
+    if request.method == 'POST':
+        form = WykonanaUslugaForm(request.POST)
+
+        if form.is_valid():
+            wykonana_usluga = form.save(commit=False)
+            wykonana_usluga.zlecenie = zlecenie
+
+            if not wykonana_usluga.cena_wykonania:
+                wykonana_usluga.cena_wykonania = wykonana_usluga.usluga.cena
+
+            wykonana_usluga.save()
+
+            messages.success(request, 'Wykonana usługa została dodana.')
+            return redirect('szczegoly_zlecenia', zlecenie_id=zlecenie.id)
+    else:
+        form = WykonanaUslugaForm()
+
+    return render(request, 'formularz.html', {
+        'form': form,
+        'tytul': f'Dodaj wykonaną usługę do zlecenia #{zlecenie.id}',
+        'przycisk': 'Zapisz usługę',
+    })
+    

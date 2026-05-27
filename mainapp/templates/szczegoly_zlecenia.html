@@ -113,6 +113,10 @@
 <div class="actions">
     {% if uzytkownik_aplikacji.rola == 'mechanik' or uzytkownik_aplikacji.rola == 'admin' %}
         <a href="{% url 'zmien_status' zlecenie.id %}" class="btn">Zmień status</a>
+        <a href="{% url 'dodaj_notatke_serwisowa' zlecenie.id %}" class="btn">Dodaj notatkę</a>
+        <a href="{% url 'dodaj_termin_serwisu' zlecenie.id %}" class="btn">Dodaj termin</a>
+        <a href="{% url 'dodaj_wykonana_usluga' zlecenie.id %}" class="btn">Dodaj usługę</a>
+        
     {% endif %}
 
     <a href="{% url 'zlecenia' %}" class="btn">Powrót do zleceń</a>
