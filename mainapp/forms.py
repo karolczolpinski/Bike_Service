@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+import re
 
 from .models import (
     Rower,
@@ -14,6 +15,35 @@ from .models import (
     PozycjaZamowienia,
     ZlecenieSerwisowe,
 )
+
+POLISH_NAME_PATTERN = re.compile(r'^[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\-\s]+$')
+
+def validate_person_name(value, field_label):
+    value = value.strip()
+
+    if len(value) < 2:
+        raise forms.ValidationError(f'{field_label} musi mieć co najmniej 2 znaki.')
+
+    if not POLISH_NAME_PATTERN.match(value):
+        raise forms.ValidationError(
+            f'{field_label} może zawierać tylko litery, spacje i myślniki.'
+        )
+
+    return value
+
+
+def validate_login(value):
+    value = value.strip()
+
+    if len(value) < 3:
+        raise forms.ValidationError('Login musi mieć co najmniej 3 znaki.')
+
+    if not re.match(r'^[a-zA-Z0-9_.-]+$', value):
+        raise forms.ValidationError(
+            'Login może zawierać tylko litery, cyfry, kropkę, myślnik i podkreślenie.'
+        )
+
+    return value.lower()
 
 class RowerForm(forms.ModelForm):
     class Meta:
@@ -103,6 +133,37 @@ class UzytkownikCreateForm(forms.Form):
 
         return email
         
+        def clean_imie(self):
+        return validate_person_name(self.cleaned_data.get('imie', ''), 'Imię')
+
+    def clean_nazwisko(self):
+        return validate_person_name(self.cleaned_data.get('nazwisko', ''), 'Nazwisko')
+
+    def clean_login(self):
+        login = validate_login(self.cleaned_data.get('login', ''))
+
+        if User.objects.filter(username=login).exists():
+            raise forms.ValidationError('Użytkownik o takim loginie już istnieje.')
+
+        if Uzytkownik.objects.filter(login=login).exists():
+            raise forms.ValidationError('Użytkownik aplikacji o takim loginie już istnieje.')
+
+        return login
+
+    def clean_haslo(self):
+        haslo = self.cleaned_data.get('haslo', '')
+
+        if len(haslo) < 8:
+            raise forms.ValidationError('Hasło musi mieć co najmniej 8 znaków.')
+
+        if not any(char.isdigit() for char in haslo):
+            raise forms.ValidationError('Hasło musi zawierać co najmniej jedną cyfrę.')
+
+        if not any(char.isupper() for char in haslo):
+            raise forms.ValidationError('Hasło musi zawierać co najmniej jedną wielką literę.')
+
+        return haslo
+        
 class RejestracjaKlientaForm(forms.Form):
     imie = forms.CharField(label='Imię', max_length=50)
     nazwisko = forms.CharField(label='Nazwisko', max_length=50)
@@ -142,6 +203,37 @@ class RejestracjaKlientaForm(forms.Form):
             raise forms.ValidationError('Podane hasła nie są takie same.')
 
         return cleaned_data
+        
+        def clean_imie(self):
+        return validate_person_name(self.cleaned_data.get('imie', ''), 'Imię')
+
+    def clean_nazwisko(self):
+        return validate_person_name(self.cleaned_data.get('nazwisko', ''), 'Nazwisko')
+
+    def clean_login(self):
+        login = validate_login(self.cleaned_data.get('login', ''))
+
+        if User.objects.filter(username=login).exists():
+            raise forms.ValidationError('Użytkownik o takim loginie już istnieje.')
+
+        if Uzytkownik.objects.filter(login=login).exists():
+            raise forms.ValidationError('Użytkownik aplikacji o takim loginie już istnieje.')
+
+        return login
+
+    def clean_haslo(self):
+        haslo = self.cleaned_data.get('haslo', '')
+
+        if len(haslo) < 8:
+            raise forms.ValidationError('Hasło musi mieć co najmniej 8 znaków.')
+
+        if not any(char.isdigit() for char in haslo):
+            raise forms.ValidationError('Hasło musi zawierać co najmniej jedną cyfrę.')
+
+        if not any(char.isupper() for char in haslo):
+            raise forms.ValidationError('Hasło musi zawierać co najmniej jedną wielką literę.')
+
+        return haslo
         
 class CzescForm(forms.ModelForm):
     class Meta:
@@ -233,3 +325,4 @@ class StatusZleceniaForm(forms.ModelForm):
         labels = {
             'status': 'Nowy status',
         }
+    
