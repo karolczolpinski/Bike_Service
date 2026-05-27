@@ -251,6 +251,9 @@ def dodaj_rower(request):
 
             if uzytkownik.rola == 'klient':
                 rower.klient = uzytkownik
+                
+            rower.marka = rower.producent.nazwa
+            rower.typ = rower.typ_roweru.nazwa
 
             rower.save()
             messages.success(request, 'Rower został dodany.')
