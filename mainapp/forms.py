@@ -19,6 +19,10 @@ from .models import (
     NotatkaSerwisowa,
     TerminSerwisu,
     WykonanaUsluga,
+    Dostawca,
+    Magazyn,
+    Zgloszenie,
+    ZlecenieSerwisowe,
 )
 
 POLISH_NAME_PATTERN = re.compile(r'^[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\-\s]+$')
