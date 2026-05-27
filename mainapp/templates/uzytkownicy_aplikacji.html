@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Użytkownicy aplikacji{% endblock %}
+
+{% block content %}
+
+<h2>Użytkownicy aplikacji</h2>
+
+<div class="actions">
+    <a href="{% url 'dodaj_uzytkownika' %}" class="btn">Dodaj użytkownika</a>
+    <a href="{% url 'panel_admin' %}" class="btn btn-secondary">Powrót do panelu</a>
+</div>
+
+<table>
+    <tr>
+        <th>Imię i nazwisko</th>
+        <th>Email</th>
+        <th>Login</th>
+        <th>Rola</th>
+        <th>Akcje</th>
+    </tr>
+
+    {% for u in uzytkownicy %}
+    <tr>
+        <td>{{ u.imie }} {{ u.nazwisko }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.login }}</td>
+        <td><span class="badge">{{ u.get_rola_display }}</span></td>
+        <td>
+            <a href="{% url 'szczegoly_uzytkownika' u.id %}" class="btn">Szczegóły</a>
+            <a href="{% url 'edytuj_uzytkownika_aplikacji' u.id %}" class="btn">Edytuj</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5">Brak użytkowników.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

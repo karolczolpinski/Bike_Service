@@ -451,6 +451,27 @@
                 font-size: 26px;
             }
         }
+        
+        .muted {
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 
@@ -468,6 +489,7 @@
                 <a href="{% url 'home' %}">Strona główna</a>
 
                 {% if user.is_authenticated and uzytkownik_aplikacji %}
+                    <a href="{% url 'moje_dane' %}">Moje dane</a>
 
                     {% if uzytkownik_aplikacji.rola == 'klient' %}
                         <a href="{% url 'panel_klienta' %}">Panel klienta</a>

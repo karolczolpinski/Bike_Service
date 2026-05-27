@@ -3,15 +3,27 @@
 {% block title %}{{ tytul }}{% endblock %}
 
 {% block content %}
-<h2>{{ tytul }}</h2>
+<div class="page-header">
+    <div>
+        <h2>{{ tytul }}</h2>
+        {% if opis %}
+            <p class="muted">{{ opis }}</p>
+        {% endif %}
+    </div>
+</div>
 
 <form method="post" class="form-box">
     {% csrf_token %}
     {{ form.as_p }}
 
     <div class="actions">
-        <button type="submit" class="btn">{{ przycisk }}</button>
-        <a href="{% url 'home' %}" class="btn btn-secondary">Powrót</a>
+        <button type="submit" class="btn">{{ przycisk|default:"Zapisz" }}</button>
+
+        {% if powrot_url %}
+            <a href="{{ powrot_url }}" class="btn btn-secondary">Powrót</a>
+        {% else %}
+            <a href="{% url 'home' %}" class="btn btn-secondary">Powrót</a>
+        {% endif %}
     </div>
 </form>
 {% endblock %}

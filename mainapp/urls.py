@@ -58,4 +58,8 @@ urlpatterns = [
     
     path('dostawcy/dodaj/', views.dodaj_dostawce, name='dodaj_dostawce'),
     path('magazyn/operacja/dodaj/', views.dodaj_operacje_magazynowa, name='dodaj_operacje_magazynowa'),
+    
+    path('panel-admin/uzytkownicy/', views.uzytkownicy_aplikacji, name='uzytkownicy_aplikacji'),
+    path('panel-admin/uzytkownicy/<int:uzytkownik_id>/', views.szczegoly_uzytkownika, name='szczegoly_uzytkownika'),
+    path('panel-admin/uzytkownicy/<int:uzytkownik_id>/edytuj/', views.edytuj_uzytkownika_aplikacji, name='edytuj_uzytkownika_aplikacji'),
 ]

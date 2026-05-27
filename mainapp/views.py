@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render, get_object_or_404
 
+from django.urls import reverse
+
 from django.contrib.auth import login
 from django.db import transaction
 
@@ -26,6 +28,7 @@ from .forms import (
     NotatkaSerwisowaForm,
     TerminSerwisuForm,
     WykonanaUslugaForm,
+    UzytkownikProfilForm,
 )
 
 from .models import (
@@ -738,7 +741,7 @@ def moje_dane(request):
 
 @login_required
 def edytuj_adres(request):
-    if not wymagaj_roli(request, ['klient', 'admin'], 'Brak dostępu do edycji adresu.'):
+    if not wymagaj_roli(request, ['klient', 'mechanik', 'magazynier', 'admin'], 'Brak dostępu do edycji adresu.'):
         return redirect('home')
 
     uzytkownik = pobierz_uzytkownika_aplikacji(request)
@@ -766,12 +769,12 @@ def edytuj_adres(request):
         'form': form,
         'tytul': 'Edytuj adres',
         'przycisk': 'Zapisz adres',
+        'powrot_url': reverse('moje_dane'),
     })
-
 
 @login_required
 def edytuj_kontakt(request):
-    if not wymagaj_roli(request, ['klient', 'admin'], 'Brak dostępu do edycji kontaktu.'):
+    if not wymagaj_roli(request, ['klient', 'mechanik', 'magazynier', 'admin'], 'Brak dostępu do edycji kontaktu.'):
         return redirect('home')
 
     uzytkownik = pobierz_uzytkownika_aplikacji(request)
@@ -799,6 +802,7 @@ def edytuj_kontakt(request):
         'form': form,
         'tytul': 'Edytuj kontakt',
         'przycisk': 'Zapisz kontakt',
+        'powrot_url': reverse('moje_dane'),
     })
     
 def pobierz_zlecenie_dla_mechanika_lub_admina(request, zlecenie_id):
@@ -846,6 +850,7 @@ def dodaj_notatke_serwisowa(request, zlecenie_id):
         'form': form,
         'tytul': f'Dodaj notatkę do zlecenia #{zlecenie.id}',
         'przycisk': 'Zapisz notatkę',
+        'powrot_url': reverse('szczegoly_zlecenia', args=[zlecenie.id]),
     })
     
 @login_required
@@ -875,6 +880,7 @@ def dodaj_termin_serwisu(request, zlecenie_id):
         'form': form,
         'tytul': f'Dodaj termin do zlecenia #{zlecenie.id}',
         'przycisk': 'Zapisz termin',
+        'powrot_url': reverse('szczegoly_zlecenia', args=[zlecenie.id]),
     })
     
 @login_required
@@ -908,6 +914,7 @@ def dodaj_wykonana_usluga(request, zlecenie_id):
         'form': form,
         'tytul': f'Dodaj wykonaną usługę do zlecenia #{zlecenie.id}',
         'przycisk': 'Zapisz usługę',
+        'powrot_url': reverse('szczegoly_zlecenia', args=[zlecenie.id]),
     })
     
 @login_required
@@ -924,11 +931,12 @@ def dodaj_dostawce(request):
             return redirect('panel_magazyniera')
     else:
         form = DostawcaForm()
-
+    
     return render(request, 'formularz.html', {
         'form': form,
         'tytul': 'Dodaj dostawcę',
         'przycisk': 'Zapisz dostawcę',
+        'powrot_url': reverse('panel_magazyniera'),
     })
 
 
@@ -966,5 +974,64 @@ def dodaj_operacje_magazynowa(request):
         'form': form,
         'tytul': 'Dodaj operację magazynową',
         'przycisk': 'Zapisz operację',
+        'powrot_url': reverse('czesci'),
+    })
+    
+@login_required
+def szczegoly_uzytkownika(request, uzytkownik_id):
+    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może przeglądać szczegóły użytkownika.'):
+        return redirect('home')
+
+    uzytkownik = get_object_or_404(Uzytkownik, id=uzytkownik_id)
+
+    adres = Adres.objects.filter(uzytkownik=uzytkownik).first()
+    kontakt = Kontakt.objects.filter(uzytkownik=uzytkownik).first()
+
+    rowery = Rower.objects.filter(klient=uzytkownik)
+    zgloszenia = Zgloszenie.objects.filter(klient=uzytkownik)
+    zlecenia_mechanika = ZlecenieSerwisowe.objects.filter(mechanik=uzytkownik)
+
+    return render(request, 'szczegoly_uzytkownika.html', {
+        'profil': uzytkownik,
+        'adres': adres,
+        'kontakt': kontakt,
+        'rowery': rowery,
+        'zgloszenia': zgloszenia,
+        'zlecenia_mechanika': zlecenia_mechanika,
+    })    
+    
+@login_required
+def uzytkownicy_aplikacji(request):
+    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może przeglądać użytkowników.'):
+        return redirect('home')
+
+    uzytkownicy = Uzytkownik.objects.all().order_by('rola', 'nazwisko', 'imie')
+
+    return render(request, 'uzytkownicy_aplikacji.html', {
+        'uzytkownicy': uzytkownicy,
+    })
+    
+@login_required
+def edytuj_uzytkownika_aplikacji(request, uzytkownik_id):
+    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może edytować użytkowników.'):
+        return redirect('home')
+
+    uzytkownik = get_object_or_404(Uzytkownik, id=uzytkownik_id)
+
+    if request.method == 'POST':
+        form = UzytkownikProfilForm(request.POST, instance=uzytkownik)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profil użytkownika został zaktualizowany.')
+            return redirect('szczegoly_uzytkownika', uzytkownik_id=uzytkownik.id)
+    else:
+        form = UzytkownikProfilForm(instance=uzytkownik)
+
+    return render(request, 'formularz.html', {
+        'form': form,
+        'tytul': f'Edytuj profil: {uzytkownik}',
+        'przycisk': 'Zapisz profil',
+        'powrot_url': reverse('szczegoly_uzytkownika', args=[uzytkownik.id]),
     })
     

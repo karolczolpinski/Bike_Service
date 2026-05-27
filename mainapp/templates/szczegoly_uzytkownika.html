@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Szczegóły użytkownika{% endblock %}
+
+{% block content %}
+
+<h2>{{ profil.imie }} {{ profil.nazwisko }}</h2>
+
+<div class="actions">
+    <a href="{% url 'edytuj_uzytkownika_aplikacji' profil.id %}" class="btn">Edytuj profil</a>
+    <a href="{% url 'uzytkownicy_aplikacji' %}" class="btn btn-secondary">Powrót do listy</a>
+</div>
+
+<div class="stats">
+    <div class="card">
+        <h3>Dane podstawowe</h3>
+        <p>Email: {{ profil.email }}</p>
+        <p>Login: {{ profil.login }}</p>
+        <p>Rola: <span class="badge">{{ profil.get_rola_display }}</span></p>
+    </div>
+
+    <div class="card">
+        <h3>Adres</h3>
+        {% if adres %}
+            <p>
+                {{ adres.ulica }} {{ adres.numer_budynku }}
+                {% if adres.numer_lokalu %}/{{ adres.numer_lokalu }}{% endif %}
+            </p>
+            <p>{{ adres.kod_pocztowy }} {{ adres.miasto }}</p>
+        {% else %}
+            <p>Brak adresu.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3>Kontakt</h3>
+        {% if kontakt %}
+            <p>Telefon: {{ kontakt.telefon }}</p>
+            <p>Dodatkowy email: {{ kontakt.dodatkowy_email }}</p>
+            <p>Preferowany kontakt: {{ kontakt.preferowany_kontakt }}</p>
+        {% else %}
+            <p>Brak kontaktu.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if profil.rola == 'klient' %}
+    <h3>Rowery klienta</h3>
+
+    <table>
+        <tr>
+            <th>Rower</th>
+            <th>Numer seryjny</th>
+        </tr>
+
+        {% for r in rowery %}
+        <tr>
+            <td>{{ r }}</td>
+            <td>{{ r.numer_seryjny }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">Brak rowerów.</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Zgłoszenia klienta</h3>
+
+    <table>
+        <tr>
+            <th>Opis</th>
+            <th>Status</th>
+        </tr>
+
+        {% for z in zgloszenia %}
+        <tr>
+            <td>{{ z.opis_usterki }}</td>
+            <td><span class="badge">{{ z.status }}</span></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">Brak zgłoszeń.</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+{% if profil.rola == 'mechanik' %}
+    <h3>Zlecenia mechanika</h3>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Akcje</th>
+        </tr>
+
+        {% for z in zlecenia_mechanika %}
+        <tr>
+            <td>#{{ z.id }}</td>
+            <td><span class="badge">{{ z.status }}</span></td>
+            <td>
+                <a href="{% url 'szczegoly_zlecenia' z.id %}" class="btn">Zlecenie</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">Brak zleceń przypisanych do mechanika.</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+{% endblock %}

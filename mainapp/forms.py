@@ -21,8 +21,6 @@ from .models import (
     WykonanaUsluga,
     Dostawca,
     Magazyn,
-    Zgloszenie,
-    ZlecenieSerwisowe,
 )
 
 POLISH_NAME_PATTERN = re.compile(r'^[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\-\s]+$')
@@ -453,3 +451,19 @@ class OperacjaMagazynowaForm(forms.ModelForm):
 
         return ilosc
         
+class UzytkownikProfilForm(forms.ModelForm):
+    class Meta:
+        model = Uzytkownik
+        fields = ['imie', 'nazwisko', 'email', 'rola']
+        labels = {
+            'imie': 'Imię',
+            'nazwisko': 'Nazwisko',
+            'email': 'Email',
+            'rola': 'Rola',
+        }
+
+    def clean_imie(self):
+        return validate_person_name(self.cleaned_data.get('imie', ''), 'Imię')
+
+    def clean_nazwisko(self):
+        return validate_person_name(self.cleaned_data.get('nazwisko', ''), 'Nazwisko')
