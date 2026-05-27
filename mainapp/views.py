@@ -95,16 +95,16 @@ def zmien_status_zlecenia(zlecenie, nowy_status, komentarz):
         tresc=komentarz
     )
 
-def home(request):
-    context = {
-        'liczba_uzytkownikow': Uzytkownik.objects.count(),
-        'liczba_rowerow': Rower.objects.count(),
-        'liczba_zgloszen': Zgloszenie.objects.count(),
-        'liczba_czesci': Czesc.objects.count(),
-        'uzytkownik_aplikacji': pobierz_uzytkownika_aplikacji(request),
-    }
 
-    return render(request, 'home.html', context)
+def home(request):
+    profil = None
+
+    if request.user.is_authenticated:
+        profil = Uzytkownik.objects.filter(login=request.user.username).first()
+
+    return render(request, 'home.html', {
+        'profil': profil,
+    })
 
 def rejestracja(request):
     if request.user.is_authenticated:
