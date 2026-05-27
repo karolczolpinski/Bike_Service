@@ -18,16 +18,42 @@ from .models import (
 class RowerForm(forms.ModelForm):
     class Meta:
         model = Rower
-        fields = ['klient', 'producent', 'typ_roweru', 'marka', 'model', 'typ', 'numer_seryjny']
+        fields = [
+            'klient',
+            'producent',
+            'typ_roweru',
+            'model',
+            'numer_seryjny',
+        ]
         labels = {
             'klient': 'Klient',
             'producent': 'Producent',
             'typ_roweru': 'Typ roweru',
-            'marka': 'Marka',
             'model': 'Model',
-            'typ': 'Typ',
             'numer_seryjny': 'Numer seryjny',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['producent'].required = True
+        self.fields['typ_roweru'].required = True
+
+    def clean_model(self):
+        model = self.cleaned_data.get('model', '').strip()
+
+        if len(model) < 2:
+            raise forms.ValidationError('Model roweru musi mieć co najmniej 2 znaki.')
+
+        return model
+
+    def clean_numer_seryjny(self):
+        numer = self.cleaned_data.get('numer_seryjny', '').strip()
+
+        if len(numer) < 5:
+            raise forms.ValidationError('Numer seryjny musi mieć co najmniej 5 znaków.')
+
+        return numer.upper()
 
 class ZgloszenieForm(forms.ModelForm):
     class Meta:
