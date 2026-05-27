@@ -30,6 +30,7 @@ from .forms import (
     WykonanaUslugaForm,
     UzytkownikProfilForm,
     OperacjaMagazynowaForm,
+    DostawcaForm,
 )
 
 from .models import (
@@ -244,49 +245,6 @@ def czesci(request):
 
     czesci = Czesc.objects.all()
     return render(request, 'czesci.html', {'czesci': czesci})
-    
-@login_required
-def szczegoly_czesci(request, czesc_id):
-    if not wymagaj_roli(request, ['mechanik', 'magazynier', 'admin'], 'Brak dostępu do szczegółów części.'):
-        return redirect('home')
-
-    czesc = get_object_or_404(Czesc, id=czesc_id)
-
-    zuzycia = ZuzytaCzesc.objects.filter(czesc=czesc).select_related('zlecenie').order_by('-id')
-    operacje = Magazyn.objects.filter(czesc=czesc).order_by('-id')
-    pozycje_zamowien = PozycjaZamowienia.objects.filter(czesc=czesc).select_related('zamowienie').order_by('-id')
-
-    return render(request, 'szczegoly_czesci.html', {
-        'czesc': czesc,
-        'zuzycia': zuzycia,
-        'operacje': operacje,
-        'pozycje_zamowien': pozycje_zamowien,
-    })
-
-
-@login_required
-def edytuj_czesc(request, czesc_id):
-    if not wymagaj_roli(request, ['magazynier', 'admin'], 'Tylko magazynier lub admin może edytować części.'):
-        return redirect('home')
-
-    czesc = get_object_or_404(Czesc, id=czesc_id)
-
-    if request.method == 'POST':
-        form = CzescForm(request.POST, instance=czesc)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Część została zaktualizowana.')
-            return redirect('szczegoly_czesci', czesc_id=czesc.id)
-    else:
-        form = CzescForm(instance=czesc)
-
-    return render(request, 'formularz.html', {
-        'form': form,
-        'tytul': f'Edytuj część: {czesc.nazwa}',
-        'przycisk': 'Zapisz zmiany',
-        'powrot_url': reverse('szczegoly_czesci', args=[czesc.id]),
-    })
     
 @login_required
 def szczegoly_czesci(request, czesc_id):

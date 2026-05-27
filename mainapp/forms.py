@@ -118,17 +118,6 @@ class UzytkownikCreateForm(forms.Form):
     haslo = forms.CharField(label='Hasło', widget=forms.PasswordInput)
     rola = forms.ChoiceField(label='Rola', choices=ROLE_CHOICES)
 
-    def clean_login(self):
-        login = self.cleaned_data['login']
-
-        if User.objects.filter(username=login).exists():
-            raise forms.ValidationError('Konto logowania o takim loginie już istnieje.')
-
-        if Uzytkownik.objects.filter(login=login).exists():
-            raise forms.ValidationError('Użytkownik aplikacji o takim loginie już istnieje.')
-
-        return login
-
     def clean_email(self):
         email = self.cleaned_data['email']
 
@@ -178,17 +167,6 @@ class RejestracjaKlientaForm(forms.Form):
     login = forms.CharField(label='Login', max_length=50)
     haslo = forms.CharField(label='Hasło', widget=forms.PasswordInput)
     powtorz_haslo = forms.CharField(label='Powtórz hasło', widget=forms.PasswordInput)
-
-    def clean_login(self):
-        login = self.cleaned_data['login']
-
-        if User.objects.filter(username=login).exists():
-            raise forms.ValidationError('Konto o takim loginie już istnieje.')
-
-        if Uzytkownik.objects.filter(login=login).exists():
-            raise forms.ValidationError('Użytkownik aplikacji o takim loginie już istnieje.')
-
-        return login
 
     def clean_email(self):
         email = self.cleaned_data['email']
