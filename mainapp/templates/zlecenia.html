@@ -3,45 +3,84 @@
 {% block title %}Zlecenia serwisowe{% endblock %}
 
 {% block content %}
+
 <h2>Zlecenia serwisowe</h2>
+
+<p>
+    Lista zleceń serwisowych utworzonych na podstawie zgłoszeń klientów.
+    Z tego miejsca możesz przejść do szczegółów zlecenia, zmienić status
+    oraz wykonać operacje serwisowe.
+</p>
 
 {% if uzytkownik_aplikacji.rola == 'mechanik' or uzytkownik_aplikacji.rola == 'admin' %}
 <div class="actions">
     <a href="{% url 'dodaj_diagnoze' %}" class="btn">Dodaj diagnozę</a>
     <a href="{% url 'dodaj_raport' %}" class="btn">Dodaj raport</a>
-    <a href="{% url 'dodaj_zuzyta_czesc' %}" class="btn">Zużyta część</a>
+    <a href="{% url 'dodaj_zuzyta_czesc' %}" class="btn">Dodaj zużytą część</a>
 </div>
 {% endif %}
 
 <table>
     <tr>
         <th>ID</th>
-        <th>Zgłoszenie</th>
+        <th>Klient</th>
+        <th>Rower</th>
         <th>Mechanik</th>
         <th>Status</th>
         <th>Data przyjęcia</th>
+        <th>Data zakończenia</th>
         <th>Akcje</th>
     </tr>
 
     {% for z in zlecenia %}
     <tr>
-        <td>{{ z.id }}</td>
-        <td>{{ z.zgloszenie }}</td>
-        <td>{{ z.mechanik }}</td>
-        <td><span class="badge">{{ z.status }}</span></td>
-        <td>{{ z.data_przyjecia }}</td>
+        <td>#{{ z.id }}</td>
+
+        <td>
+            {{ z.zgloszenie.klient }}
+        </td>
+
+        <td>
+            {{ z.zgloszenie.rower }}
+        </td>
+
+        <td>
+            {% if z.mechanik %}
+                {{ z.mechanik }}
+            {% else %}
+                <span class="badge">Nieprzypisany</span>
+            {% endif %}
+        </td>
+
+        <td>
+            <span class="badge">{{ z.status }}</span>
+        </td>
+
+        <td>
+            {{ z.data_przyjecia }}
+        </td>
+
+        <td>
+            {{ z.data_zakonczenia|default:"-" }}
+        </td>
+
         <td>
             <a href="{% url 'szczegoly_zlecenia' z.id %}" class="btn">Szczegóły</a>
 
             {% if uzytkownik_aplikacji.rola == 'mechanik' or uzytkownik_aplikacji.rola == 'admin' %}
-                <a href="{% url 'przyjmij_zlecenie' z.id %}" class="btn">Przyjmij</a>
+                <a href="{% url 'zmien_status' z.id %}" class="btn">Zmień status</a>
+
+                {% if not z.mechanik %}
+                    <a href="{% url 'przyjmij_zlecenie' z.id %}" class="btn">Przyjmij</a>
+                {% endif %}
             {% endif %}
         </td>
     </tr>
     {% empty %}
     <tr>
-        <td colspan="6">Brak zleceń.</td>
+        <td colspan="8">Brak zleceń serwisowych.</td>
     </tr>
     {% endfor %}
 </table>
+
 {% endblock %}
