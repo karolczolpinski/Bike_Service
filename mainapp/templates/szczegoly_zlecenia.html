@@ -106,6 +106,7 @@
             {% if uzytkownik_aplikacji.rola == 'admin' %}
             <a href="{% url 'edytuj_platnosc' p.id %}" class="btn">Edytuj</a>
             {% endif %}
+            
         </td>
     </tr>
     {% empty %}
@@ -146,6 +147,7 @@
     
     {% if uzytkownik_aplikacji.rola == 'admin' %}
         <a href="{% url 'edytuj_zlecenie' zlecenie.id %}" class="btn">Edytuj zlecenie</a>
+        <a href="{% url 'anuluj_zlecenie' zlecenie.id %}" class="btn">Anuluj zlecenie</a>
     {%endif %}
 
     <a href="{% url 'zlecenia' %}" class="btn">Powrót do zleceń</a>

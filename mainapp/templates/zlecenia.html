@@ -62,19 +62,6 @@
 
         <td>
             <a href="{% url 'szczegoly_zlecenia' z.id %}" class="btn">Szczegóły</a>
-
-            {% if uzytkownik_aplikacji.rola == 'mechanik' or uzytkownik_aplikacji.rola == 'admin' %}
-                <a href="{% url 'zmien_status' z.id %}" class="btn">Zmień status</a>
-
-                {% if not z.mechanik %}
-                    <a href="{% url 'przyjmij_zlecenie' z.id %}" class="btn">Przyjmij</a>
-                {% endif %}
-            {% endif %}
-
-            {% if uzytkownik_aplikacji.rola == 'admin' %}
-                <a href="{% url 'edytuj_zlecenie' z.id %}" class="btn">Edytuj</a>
-                <a href="{% url 'usun_zlecenie' z.id %}" class="btn">Usuń</a>
-            {% endif %}
         </td>
     </tr>
     {% empty %}

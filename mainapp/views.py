@@ -1633,19 +1633,24 @@ def usun_zamowienie_czesci(request, zamowienie_id):
     })
     
 @login_required
-def usun_zlecenie(request, zlecenie_id):
-    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może usuwać zlecenia.'):
+def anuluj_zlecenie(request, zlecenie_id):
+    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może anulować zlecenia.'):
         return redirect('home')
 
     zlecenie = get_object_or_404(ZlecenieSerwisowe, id=zlecenie_id)
 
     if request.method == 'POST':
-        zlecenie.delete()
-        messages.success(request, 'Zlecenie zostało usunięte.')
+        zmien_status_zlecenia_przez_procedure(
+            zlecenie.id,
+            'anulowane',
+            'Zlecenie zostało anulowane przez administratora.'
+        )
+
+        messages.success(request, 'Zlecenie zostało anulowane.')
         return redirect('zlecenia')
 
     return render(request, 'potwierdz_usuniecie.html', {
-        'tytul': f'Usuń zlecenie #{zlecenie.id}',
+        'tytul': f'Anuluj zlecenie #{zlecenie.id}',
         'obiekt': zlecenie,
         'powrot_url': reverse('szczegoly_zlecenia', args=[zlecenie.id]),
     })
