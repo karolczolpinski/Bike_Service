@@ -5,12 +5,18 @@
 {% block content %}
 <h2>Magazyn części</h2>
 
+<p>
+    Lista części dostępnych w systemie serwisu rowerowego. Z tego miejsca można
+    sprawdzić stan magazynowy, przejść do szczegółów części oraz wykonać operacje
+    dostępne dla magazyniera lub administratora.
+</p>
+
+{% if uzytkownik_aplikacji.rola == 'magazynier' or uzytkownik_aplikacji.rola == 'admin' %}
 <div class="actions">
-    {% if uzytkownik_aplikacji.rola == 'magazynier' or uzytkownik_aplikacji.rola == 'admin' %}
-        <a href="{% url 'dodaj_czesc' %}" class="btn">Dodaj część</a>
-        <a href="{% url 'dodaj_operacje_magazynowa' %}" class="btn">Dodaj operację magazynową</a>
-    {% endif %}
+    <a href="{% url 'dodaj_czesc' %}" class="btn">Dodaj część</a>
+    <a href="{% url 'magazyn' %}" class="btn">Operacje magazynowe</a>
 </div>
+{% endif %}</div>
 
 <table>
     <tr>

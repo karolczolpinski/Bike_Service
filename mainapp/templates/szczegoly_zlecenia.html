@@ -139,17 +139,20 @@
 <div class="actions">
     {% if uzytkownik_aplikacji.rola == 'mechanik' or uzytkownik_aplikacji.rola == 'admin' %}
         <a href="{% url 'zmien_status' zlecenie.id %}" class="btn">Zmień status</a>
+        <a href="{% url 'dodaj_raport' %}" class="btn">Dodaj raport naprawy</a>
+        <a href="{% url 'dodaj_zuzyta_czesc' %}" class="btn">Dodaj zużytą część</a>
         <a href="{% url 'dodaj_notatke_serwisowa' zlecenie.id %}" class="btn">Dodaj notatkę</a>
         <a href="{% url 'dodaj_termin_serwisu' zlecenie.id %}" class="btn">Dodaj termin</a>
         <a href="{% url 'dodaj_wykonana_usluga' zlecenie.id %}" class="btn">Dodaj usługę</a>
-        
     {% endif %}
-    
+
     {% if uzytkownik_aplikacji.rola == 'admin' %}
         <a href="{% url 'edytuj_zlecenie' zlecenie.id %}" class="btn">Edytuj zlecenie</a>
-        <a href="{% url 'anuluj_zlecenie' zlecenie.id %}" class="btn">Anuluj zlecenie</a>
-    {%endif %}
+
+        {% if zlecenie.status != 'anulowane' %}
+            <a href="{% url 'anuluj_zlecenie' zlecenie.id %}" class="btn">Anuluj zlecenie</a>
+        {% endif %}
+    {% endif %}
 
     <a href="{% url 'zlecenia' %}" class="btn">Powrót do zleceń</a>
-</div>
-{% endblock %}
+</div>{% endblock %}
