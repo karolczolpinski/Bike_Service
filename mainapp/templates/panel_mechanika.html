@@ -12,27 +12,37 @@
     </div>
 </div>
 
-<h2 class="section-title">Szybkie akcje</h2>
+<h2 class="section-title">Praca serwisowa</h2>
 
 <div class="quick-grid">
     <a href="{% url 'zlecenia' %}" class="quick-card">
-        <strong>Zlecenia</strong>
-        <span>Przegląd i obsługa zleceń serwisowych.</span>
+        <strong>Moje zlecenia</strong>
+        <span>Przegląd zleceń przypisanych do mechanika.</span>
     </a>
 
     <a href="{% url 'dodaj_diagnoze' %}" class="quick-card">
         <strong>Dodaj diagnozę</strong>
-        <span>Wprowadź diagnozę usterki.</span>
+        <span>Dodaj diagnozę do obsługiwanego zlecenia.</span>
     </a>
 
     <a href="{% url 'dodaj_raport' %}" class="quick-card">
-        <strong>Dodaj raport</strong>
-        <span>Opisz wykonane czynności.</span>
+        <strong>Dodaj raport naprawy</strong>
+        <span>Opisz wykonane czynności serwisowe.</span>
     </a>
 
     <a href="{% url 'dodaj_zuzyta_czesc' %}" class="quick-card">
-        <strong>Zużyta część</strong>
-        <span>Zarejestruj części użyte podczas naprawy.</span>
+        <strong>Dodaj zużytą część</strong>
+        <span>Zarejestruj część wykorzystaną podczas naprawy.</span>
+    </a>
+
+    <a href="{% url 'czesci' %}" class="quick-card">
+        <strong>Części</strong>
+        <span>Podgląd części dostępnych w magazynie.</span>
+    </a>
+
+    <a href="{% url 'powiadomienia' %}" class="quick-card">
+        <strong>Powiadomienia</strong>
+        <span>Komunikaty dotyczące pracy serwisowej.</span>
     </a>
 </div>
 {% endblock %}
