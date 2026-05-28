@@ -28,7 +28,6 @@
         <td><span class="badge">{{ u.get_rola_display }}</span></td>
         <td>
             <a href="{% url 'szczegoly_uzytkownika' u.id %}" class="btn">Szczegóły</a>
-            <a href="{% url 'edytuj_uzytkownika_aplikacji' u.id %}" class="btn">Edytuj</a>
         </td>
     </tr>
     {% empty %}
