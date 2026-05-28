@@ -29,10 +29,6 @@
         <td>{{ czesc.cena }} zł</td>
         <td>
             <a href="{% url 'szczegoly_czesci' czesc.id %}" class="btn">Szczegóły</a>
-
-            {% if uzytkownik_aplikacji.rola == 'magazynier' or uzytkownik_aplikacji.rola == 'admin' %}
-                <a href="{% url 'edytuj_czesc' czesc.id %}" class="btn">Edytuj</a>
-            {% endif %}
         </td>
     </tr>
     {% empty %}
