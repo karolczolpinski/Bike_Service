@@ -21,7 +21,6 @@ from .models import (
     WykonanaUsluga,
     Dostawca,
     Magazyn,
-    Platnosc,
 )
 
 POLISH_NAME_PATTERN = re.compile(r'^[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\-\s]+$')
@@ -273,18 +272,6 @@ class ZamowienieCzesciForm(forms.ModelForm):
             'dostawca': 'Dostawca',
             'status': 'Status',
             'uwagi': 'Uwagi',
-        }
-        
-class PlatnoscForm(forms.ModelForm):
-    class Meta:
-        model = Platnosc
-        fields = ['zlecenie', 'kwota', 'data_platnosci', 'status', 'metoda_platnosci']
-        labels = {
-            'zlecenie': 'Zlecenie',
-            'kwota': 'Kwota',
-            'data_platnosci': 'Data płatności',
-            'status': 'Status',
-            'metoda_platnosci': 'Metoda płatności',
         }
         
 class PozycjaZamowieniaForm(forms.ModelForm):
