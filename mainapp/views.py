@@ -32,11 +32,7 @@ from .forms import (
     OperacjaMagazynowaForm,
     DostawcaForm,
     ZlecenieSerwisoweEditForm,
-    Diagnoza,
-    RaportNaprawy,
-    ZuzytaCzesc,
-    ZamowienieCzesci,
-    PozycjaZamowienia,
+    PlatnoscForm,
 )
 
 from .models import (
@@ -60,6 +56,13 @@ from .models import (
     TerminSerwisu,
     WykonanaUsluga,
     Magazyn,
+    Diagnoza,
+    RaportNaprawy,
+    ZuzytaCzesc,
+    ZamowienieCzesci,
+    PozycjaZamowienia,
+    Platnosc,
+    Powiadomienie,
 )
 
 def pobierz_uzytkownika_aplikacji(request):
@@ -1476,5 +1479,133 @@ def szczegoly_zamowienia_czesci(request, zamowienie_id):
     return render(request, 'szczegoly_zamowienia_czesci.html', {
         'zamowienie': zamowienie,
         'pozycje': pozycje,
+    })
+    
+@login_required
+def platnosci(request):
+    uzytkownik = pobierz_uzytkownika_aplikacji(request)
+
+    if uzytkownik is None:
+        messages.error(request, 'Brak profilu użytkownika aplikacji.')
+        return redirect('home')
+
+    if uzytkownik.rola == 'admin':
+        platnosci = Platnosc.objects.select_related(
+            'zlecenie',
+            'zlecenie__zgloszenie',
+            'zlecenie__zgloszenie__klient',
+            'zlecenie__zgloszenie__rower',
+        ).order_by('-id')
+
+    elif uzytkownik.rola == 'klient':
+        platnosci = Platnosc.objects.filter(
+            zlecenie__zgloszenie__klient=uzytkownik
+        ).select_related(
+            'zlecenie',
+            'zlecenie__zgloszenie',
+            'zlecenie__zgloszenie__klient',
+            'zlecenie__zgloszenie__rower',
+        ).order_by('-id')
+
+    else:
+        messages.error(request, 'Brak dostępu do płatności.')
+        return redirect('home')
+
+    return render(request, 'platnosci.html', {
+        'platnosci': platnosci,
+    })
+    
+@login_required
+def szczegoly_platnosci(request, platnosc_id):
+    uzytkownik = pobierz_uzytkownika_aplikacji(request)
+
+    if uzytkownik is None:
+        messages.error(request, 'Brak profilu użytkownika aplikacji.')
+        return redirect('home')
+
+    platnosc = get_object_or_404(
+        Platnosc.objects.select_related(
+            'zlecenie',
+            'zlecenie__zgloszenie',
+            'zlecenie__zgloszenie__klient',
+            'zlecenie__zgloszenie__rower',
+        ),
+        id=platnosc_id
+    )
+
+    if uzytkownik.rola == 'klient' and platnosc.zlecenie.zgloszenie.klient != uzytkownik:
+        messages.error(request, 'Nie masz dostępu do tej płatności.')
+        return redirect('platnosci')
+
+    if uzytkownik.rola not in ['admin', 'klient']:
+        messages.error(request, 'Brak dostępu do płatności.')
+        return redirect('home')
+
+    return render(request, 'szczegoly_platnosci.html', {
+        'platnosc': platnosc,
+    })
+    
+@login_required
+def dodaj_platnosc(request):
+    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może dodawać płatności.'):
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = PlatnoscForm(request.POST)
+
+        if form.is_valid():
+            platnosc = form.save()
+
+            klient = platnosc.zlecenie.zgloszenie.klient
+
+            Powiadomienie.objects.create(
+                uzytkownik=klient,
+                tresc=f'Dodano płatność do zlecenia #{platnosc.zlecenie.id} na kwotę {platnosc.kwota} zł.'
+            )
+
+            messages.success(request, 'Płatność została dodana.')
+            return redirect('szczegoly_platnosci', platnosc_id=platnosc.id)
+    else:
+        form = PlatnoscForm()
+
+    return render(request, 'formularz.html', {
+        'form': form,
+        'tytul': 'Dodaj płatność',
+        'przycisk': 'Zapisz płatność',
+        'powrot_url': reverse('platnosci'),
+    })
+    
+@login_required
+def edytuj_platnosc(request, platnosc_id):
+    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może edytować płatności.'):
+        return redirect('home')
+
+    platnosc = get_object_or_404(Platnosc, id=platnosc_id)
+    stary_status = platnosc.status
+
+    if request.method == 'POST':
+        form = PlatnoscForm(request.POST, instance=platnosc)
+
+        if form.is_valid():
+            platnosc = form.save()
+
+            if platnosc.status != stary_status:
+                klient = platnosc.zlecenie.zgloszenie.klient
+
+                Powiadomienie.objects.create(
+                    uzytkownik=klient,
+                    tresc=f'Status płatności dla zlecenia #{platnosc.zlecenie.id} został zmieniony na: {platnosc.status}.'
+                )
+
+            messages.success(request, 'Płatność została zaktualizowana.')
+            return redirect('szczegoly_platnosci', platnosc_id=platnosc.id)
+    else:
+        form = PlatnoscForm(instance=platnosc)
+
+    return render(request, 'formularz.html', {
+        'form': form,
+        'tytul': f'Edytuj płatność #{platnosc.id}',
+        'przycisk': 'Zapisz zmiany',
+        'powrot_url': reverse('szczegoly_platnosci', args=[platnosc.id]),
     })
     

@@ -21,6 +21,7 @@ from .models import (
     WykonanaUsluga,
     Dostawca,
     Magazyn,
+    Platnosc,
 )
 
 POLISH_NAME_PATTERN = re.compile(r'^[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż\-\s]+$')
@@ -476,3 +477,23 @@ class ZlecenieSerwisoweEditForm(forms.ModelForm):
             raise forms.ValidationError('Do zlecenia można przypisać tylko użytkownika z rolą mechanika.')
 
         return mechanik
+        
+class PlatnoscForm(forms.ModelForm):
+    class Meta:
+        model = Platnosc
+        fields = ['zlecenie', 'kwota', 'status', 'metoda_platnosci', 'data_platnosci']
+        labels = {
+            'zlecenie': 'Zlecenie',
+            'kwota': 'Kwota',
+            'status': 'Status płatności',
+            'metoda_platnosci': 'Metoda płatności',
+            'data_platnosci': 'Data płatności',
+        }
+
+    def clean_kwota(self):
+        kwota = self.cleaned_data.get('kwota')
+
+        if kwota is None or kwota <= 0:
+            raise forms.ValidationError('Kwota płatności musi być większa od zera.')
+
+        return kwota

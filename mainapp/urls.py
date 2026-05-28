@@ -82,6 +82,9 @@ urlpatterns = [
     path('panel-admin/uzytkownicy/<int:uzytkownik_id>/', views.szczegoly_uzytkownika, name='szczegoly_uzytkownika'),
     path('panel-admin/uzytkownicy/<int:uzytkownik_id>/edytuj/', views.edytuj_uzytkownika_aplikacji, name='edytuj_uzytkownika_aplikacji'),
     
-    
+    path('platnosci/', views.platnosci, name='platnosci'),
+    path('platnosci/dodaj/', views.dodaj_platnosc, name='dodaj_platnosc'),
+    path('platnosci/<int:platnosc_id>/', views.szczegoly_platnosci, name='szczegoly_platnosci'),
+    path('platnosci/<int:platnosc_id>/edytuj/', views.edytuj_platnosc, name='edytuj_platnosc'),
     
 ]

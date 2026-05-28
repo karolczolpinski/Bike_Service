@@ -79,12 +79,20 @@
 </table>
 
 <h2 class="section-title">Płatności</h2>
+
+{% if uzytkownik_aplikacji.rola == 'admin' %}
+<div class="actions">
+    <a href="{% url 'dodaj_platnosc' %}" class="btn">Dodaj płatność</a>
+</div>
+{% endif %}
+
 <table>
     <tr>
         <th>Kwota</th>
         <th>Status</th>
         <th>Metoda</th>
         <th>Data płatności</th>
+        <th>Akcje</th>
     </tr>
     {% for p in platnosci %}
     <tr>
@@ -92,13 +100,19 @@
         <td><span class="badge">{{ p.status }}</span></td>
         <td>{{ p.metoda_platnosci }}</td>
         <td>{{ p.data_platnosci }}</td>
+        <td>
+            <a href="{% url 'szczegoly_platnosci' p.id %}" class="btn">Szczegóły</a>
+
+            {% if uzytkownik_aplikacji.rola == 'admin' %}
+            <a href="{% url 'edytuj_platnosc' p.id %}" class="btn">Edytuj</a>
+            {% endif %}
+        </td>
     </tr>
     {% empty %}
-    <tr>
-        <td colspan="4">Brak płatności.</td>
-    </tr>
-    {% endfor %}
-</table>
+<tr>
+    <td colspan="5">Brak płatności.</td>
+</tr>
+{% endfor %}</table>
 
 <h2 class="section-title">Historia statusów</h2>
 <table>

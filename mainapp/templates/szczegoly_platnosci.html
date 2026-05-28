@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Szczegóły płatności{% endblock %}
+
+{% block content %}
+
+<h2>Płatność #{{ platnosc.id }}</h2>
+
+<div class="actions">
+    {% if uzytkownik_aplikacji.rola == 'admin' %}
+        <a href="{% url 'edytuj_platnosc' platnosc.id %}" class="btn">Edytuj płatność</a>
+    {% endif %}
+
+    <a href="{% url 'szczegoly_zlecenia' platnosc.zlecenie.id %}" class="btn">Zlecenie</a>
+    <a href="{% url 'platnosci' %}" class="btn btn-secondary">Powrót do płatności</a>
+</div>
+
+<div class="stats">
+    <div class="card">
+        <h3>Dane płatności</h3>
+        <p><strong>Kwota:</strong> {{ platnosc.kwota }} zł</p>
+        <p><strong>Status:</strong> <span class="badge">{{ platnosc.status }}</span></p>
+        <p><strong>Metoda płatności:</strong> {{ platnosc.metoda_platnosci }}</p>
+        <p><strong>Data płatności:</strong> {{ platnosc.data_platnosci|default:"-" }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Zlecenie</h3>
+        <p><strong>Numer zlecenia:</strong> #{{ platnosc.zlecenie.id }}</p>
+        <p><strong>Status zlecenia:</strong> <span class="badge">{{ platnosc.zlecenie.status }}</span></p>
+        <p><strong>Klient:</strong> {{ platnosc.zlecenie.zgloszenie.klient }}</p>
+        <p><strong>Rower:</strong> {{ platnosc.zlecenie.zgloszenie.rower }}</p>
+    </div>
+</div>
+
+{% endblock %}

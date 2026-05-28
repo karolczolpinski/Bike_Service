@@ -3,35 +3,60 @@
 {% block title %}Płatności{% endblock %}
 
 {% block content %}
+
 <h2>Płatności</h2>
 
-{% if uzytkownik_aplikacji.rola == 'admin' %}
+<p>
+    Lista płatności za zlecenia serwisowe. Klient widzi tylko swoje płatności,
+    a administrator widzi i zarządza wszystkimi płatnościami.
+</p>
+
 <div class="actions">
-    <a href="{% url 'dodaj_platnosc' %}" class="btn">Dodaj płatność</a>
+    {% if uzytkownik_aplikacji.rola == 'admin' %}
+        <a href="{% url 'dodaj_platnosc' %}" class="btn">Dodaj płatność</a>
+    {% endif %}
 </div>
-{% endif %}
 
 <table>
     <tr>
+        <th>ID</th>
         <th>Zlecenie</th>
+        <th>Klient</th>
+        <th>Rower</th>
         <th>Kwota</th>
         <th>Status</th>
         <th>Metoda</th>
         <th>Data płatności</th>
+        <th>Akcje</th>
     </tr>
 
     {% for p in platnosci %}
     <tr>
-        <td>{{ p.zlecenie }}</td>
-        <td>{{ p.kwota }}</td>
+        <td>#{{ p.id }}</td>
+        <td>
+            <a href="{% url 'szczegoly_zlecenia' p.zlecenie.id %}">
+                #{{ p.zlecenie.id }}
+            </a>
+        </td>
+        <td>{{ p.zlecenie.zgloszenie.klient }}</td>
+        <td>{{ p.zlecenie.zgloszenie.rower }}</td>
+        <td>{{ p.kwota }} zł</td>
         <td><span class="badge">{{ p.status }}</span></td>
         <td>{{ p.metoda_platnosci }}</td>
-        <td>{{ p.data_platnosci }}</td>
+        <td>{{ p.data_platnosci|default:"-" }}</td>
+        <td>
+            <a href="{% url 'szczegoly_platnosci' p.id %}" class="btn">Szczegóły</a>
+
+            {% if uzytkownik_aplikacji.rola == 'admin' %}
+                <a href="{% url 'edytuj_platnosc' p.id %}" class="btn">Edytuj</a>
+            {% endif %}
+        </td>
     </tr>
     {% empty %}
     <tr>
-        <td colspan="5">Brak płatności.</td>
+        <td colspan="9">Brak płatności.</td>
     </tr>
     {% endfor %}
 </table>
+
 {% endblock %}
