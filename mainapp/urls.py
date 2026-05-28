@@ -56,6 +56,7 @@ urlpatterns = [
     path('zlecenia/<int:zlecenie_id>/notatka/dodaj/', views.dodaj_notatke_serwisowa, name='dodaj_notatke_serwisowa'),
     path('zlecenia/<int:zlecenie_id>/termin/dodaj/', views.dodaj_termin_serwisu, name='dodaj_termin_serwisu'),
     path('zlecenia/<int:zlecenie_id>/usluga/dodaj/', views.dodaj_wykonana_usluga, name='dodaj_wykonana_usluga'),
+    path('zlecenia/<int:zlecenie_id>/edytuj/', views.edytuj_zlecenie, name='edytuj_zlecenie'),
     
     path('zlecenia/', views.zlecenia, name='zlecenia'),
     path('zlecenia/<int:zlecenie_id>/', views.szczegoly_zlecenia, name='szczegoly_zlecenia'),
@@ -69,5 +70,7 @@ urlpatterns = [
     path('panel-admin/uzytkownicy/', views.uzytkownicy_aplikacji, name='uzytkownicy_aplikacji'),
     path('panel-admin/uzytkownicy/<int:uzytkownik_id>/', views.szczegoly_uzytkownika, name='szczegoly_uzytkownika'),
     path('panel-admin/uzytkownicy/<int:uzytkownik_id>/edytuj/', views.edytuj_uzytkownika_aplikacji, name='edytuj_uzytkownika_aplikacji'),
+    
+    
     
 ]

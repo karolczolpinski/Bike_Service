@@ -31,6 +31,7 @@ from .forms import (
     UzytkownikProfilForm,
     OperacjaMagazynowaForm,
     DostawcaForm,
+    ZlecenieSerwisoweEditForm,
 )
 
 from .models import (
@@ -1131,3 +1132,27 @@ def zmien_status_zlecenia_przez_procedure(zlecenie_id, nowy_status, komentarz):
                 "CALL zmien_status_zlecenia_sql(%s, %s, %s)",
                 [zlecenie_id, nowy_status, komentarz]
             )
+            
+@login_required
+def edytuj_zlecenie(request, zlecenie_id):
+    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może edytować dane organizacyjne zlecenia.'):
+        return redirect('home')
+
+    zlecenie = get_object_or_404(ZlecenieSerwisowe, id=zlecenie_id)
+
+    if request.method == 'POST':
+        form = ZlecenieSerwisoweEditForm(request.POST, instance=zlecenie)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Zlecenie zostało zaktualizowane.')
+            return redirect('szczegoly_zlecenia', zlecenie_id=zlecenie.id)
+    else:
+        form = ZlecenieSerwisoweEditForm(instance=zlecenie)
+
+    return render(request, 'formularz.html', {
+        'form': form,
+        'tytul': f'Edytuj zlecenie #{zlecenie.id}',
+        'przycisk': 'Zapisz zmiany',
+        'powrot_url': reverse('szczegoly_zlecenia', args=[zlecenie.id]),
+    })

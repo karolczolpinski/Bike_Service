@@ -128,6 +128,10 @@
         <a href="{% url 'dodaj_wykonana_usluga' zlecenie.id %}" class="btn">Dodaj usługę</a>
         
     {% endif %}
+    
+    {% if uzytkownik_aplikacji.rola == 'admin' %}
+        <a href="{% url 'edytuj_zlecenie' zlecenie.id %}" class="btn">Edytuj zlecenie</a>
+    {%endif %}
 
     <a href="{% url 'zlecenia' %}" class="btn">Powrót do zleceń</a>
 </div>

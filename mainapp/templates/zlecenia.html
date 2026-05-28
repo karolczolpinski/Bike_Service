@@ -8,8 +8,8 @@
 
 <p>
     Lista zleceń serwisowych utworzonych na podstawie zgłoszeń klientów.
-    Z tego miejsca możesz przejść do szczegółów zlecenia, zmienić status
-    oraz wykonać operacje serwisowe.
+    Z tego miejsca możesz przejść do szczegółów zlecenia, zmienić status,
+    przypisać mechanika oraz wykonać operacje serwisowe.
 </p>
 
 {% if uzytkownik_aplikacji.rola == 'mechanik' or uzytkownik_aplikacji.rola == 'admin' %}
@@ -34,15 +34,15 @@
 
     {% for z in zlecenia %}
     <tr>
-        <td>#{{ z.id }}</td>
-
         <td>
-            {{ z.zgloszenie.klient }}
+            <a href="{% url 'szczegoly_zlecenia' z.id %}">
+                #{{ z.id }}
+            </a>
         </td>
 
-        <td>
-            {{ z.zgloszenie.rower }}
-        </td>
+        <td>{{ z.zgloszenie.klient }}</td>
+
+        <td>{{ z.zgloszenie.rower }}</td>
 
         <td>
             {% if z.mechanik %}
@@ -56,13 +56,9 @@
             <span class="badge">{{ z.status }}</span>
         </td>
 
-        <td>
-            {{ z.data_przyjecia }}
-        </td>
+        <td>{{ z.data_przyjecia }}</td>
 
-        <td>
-            {{ z.data_zakonczenia|default:"-" }}
-        </td>
+        <td>{{ z.data_zakonczenia|default:"-" }}</td>
 
         <td>
             <a href="{% url 'szczegoly_zlecenia' z.id %}" class="btn">Szczegóły</a>
@@ -73,6 +69,10 @@
                 {% if not z.mechanik %}
                     <a href="{% url 'przyjmij_zlecenie' z.id %}" class="btn">Przyjmij</a>
                 {% endif %}
+            {% endif %}
+
+            {% if uzytkownik_aplikacji.rola == 'admin' %}
+                <a href="{% url 'edytuj_zlecenie' z.id %}" class="btn">Edytuj</a>
             {% endif %}
         </td>
     </tr>

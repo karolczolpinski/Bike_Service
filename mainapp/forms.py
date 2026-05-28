@@ -445,3 +445,11 @@ class UzytkownikProfilForm(forms.ModelForm):
 
     def clean_nazwisko(self):
         return validate_person_name(self.cleaned_data.get('nazwisko', ''), 'Nazwisko')
+        
+class ZlecenieSerwisoweEditForm(forms.ModelForm):
+    class Meta:
+        model = ZlecenieSerwisowe
+        fields = ['mechanik']
+        labels = {
+            'mechanik': 'Mechanik',
+        }
