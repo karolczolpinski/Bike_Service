@@ -32,6 +32,11 @@ from .forms import (
     OperacjaMagazynowaForm,
     DostawcaForm,
     ZlecenieSerwisoweEditForm,
+    Diagnoza,
+    RaportNaprawy,
+    ZuzytaCzesc,
+    ZamowienieCzesci,
+    PozycjaZamowienia,
 )
 
 from .models import (
@@ -317,6 +322,41 @@ def edytuj_czesc(request, czesc_id):
     })
 
 @login_required
+def zuzyte_czesci(request):
+    uzytkownik = pobierz_uzytkownika_aplikacji(request)
+
+    if uzytkownik is None:
+        messages.error(request, 'Brak profilu użytkownika aplikacji.')
+        return redirect('home')
+
+    if uzytkownik.rola not in ['mechanik', 'admin']:
+        messages.error(request, 'Brak dostępu do zużytych części.')
+        return redirect('home')
+
+    if uzytkownik.rola == 'admin':
+        zuzyte_czesci = ZuzytaCzesc.objects.select_related(
+            'zlecenie',
+            'zlecenie__zgloszenie',
+            'zlecenie__zgloszenie__klient',
+            'zlecenie__zgloszenie__rower',
+            'czesc',
+        ).order_by('-id')
+    else:
+        zuzyte_czesci = ZuzytaCzesc.objects.filter(
+            zlecenie__mechanik=uzytkownik
+        ).select_related(
+            'zlecenie',
+            'zlecenie__zgloszenie',
+            'zlecenie__zgloszenie__klient',
+            'zlecenie__zgloszenie__rower',
+            'czesc',
+        ).order_by('-id')
+
+    return render(request, 'zuzyte_czesci.html', {
+        'zuzyte_czesci': zuzyte_czesci,
+    })
+
+@login_required
 def dodaj_rower(request):
     if not wymagaj_roli(request, ['klient', 'admin'], 'Tylko klient lub admin może dodać rower.'):
         return redirect('home')
@@ -526,6 +566,38 @@ def przyjmij_zlecenie(request, zlecenie_id):
     messages.success(request, 'Zlecenie zostało przyjęte do realizacji.')
     return redirect('zlecenia')
 
+@login_required
+def diagnozy(request):
+    uzytkownik = pobierz_uzytkownika_aplikacji(request)
+
+    if uzytkownik is None:
+        messages.error(request, 'Brak profilu użytkownika aplikacji.')
+        return redirect('home')
+
+    if uzytkownik.rola not in ['mechanik', 'admin']:
+        messages.error(request, 'Brak dostępu do diagnoz.')
+        return redirect('home')
+
+    if uzytkownik.rola == 'admin':
+        diagnozy = Diagnoza.objects.select_related(
+            'zlecenie',
+            'zlecenie__zgloszenie',
+            'zlecenie__zgloszenie__klient',
+            'zlecenie__zgloszenie__rower',
+        ).order_by('-data_diagnozy')
+    else:
+        diagnozy = Diagnoza.objects.filter(
+            zlecenie__mechanik=uzytkownik
+        ).select_related(
+            'zlecenie',
+            'zlecenie__zgloszenie',
+            'zlecenie__zgloszenie__klient',
+            'zlecenie__zgloszenie__rower',
+        ).order_by('-data_diagnozy')
+
+    return render(request, 'diagnozy.html', {
+        'diagnozy': diagnozy,
+    })
 
 @login_required
 def dodaj_diagnoze(request):
@@ -551,6 +623,38 @@ def dodaj_diagnoze(request):
 
     return render(request, 'dodaj_diagnoze.html', {'form': form})
 
+@login_required
+def raporty(request):
+    uzytkownik = pobierz_uzytkownika_aplikacji(request)
+
+    if uzytkownik is None:
+        messages.error(request, 'Brak profilu użytkownika aplikacji.')
+        return redirect('home')
+
+    if uzytkownik.rola not in ['mechanik', 'admin']:
+        messages.error(request, 'Brak dostępu do raportów napraw.')
+        return redirect('home')
+
+    if uzytkownik.rola == 'admin':
+        raporty = RaportNaprawy.objects.select_related(
+            'zlecenie',
+            'zlecenie__zgloszenie',
+            'zlecenie__zgloszenie__klient',
+            'zlecenie__zgloszenie__rower',
+        ).order_by('-data_raportu')
+    else:
+        raporty = RaportNaprawy.objects.filter(
+            zlecenie__mechanik=uzytkownik
+        ).select_related(
+            'zlecenie',
+            'zlecenie__zgloszenie',
+            'zlecenie__zgloszenie__klient',
+            'zlecenie__zgloszenie__rower',
+        ).order_by('-data_raportu')
+
+    return render(request, 'raporty.html', {
+        'raporty': raporty,
+    })
 
 @login_required
 def dodaj_raport(request):
@@ -706,12 +810,18 @@ def powiadomienia(request):
         messages.error(request, 'Brak profilu użytkownika aplikacji.')
         return redirect('home')
 
-    if uzytkownik.rola == 'admin':
-        powiadomienia = Powiadomienie.objects.all().order_by('-data_wyslania')
-    else:
-        powiadomienia = Powiadomienie.objects.filter(uzytkownik=uzytkownik).order_by('-data_wyslania')
+    lista_powiadomien = Powiadomienie.objects.filter(
+        uzytkownik=uzytkownik
+    ).order_by('-id')
 
-    return render(request, 'powiadomienia.html', {'powiadomienia': powiadomienia})
+    Powiadomienie.objects.filter(
+        uzytkownik=uzytkownik,
+        czy_odczytane=False
+    ).update(czy_odczytane=True)
+
+    return render(request, 'powiadomienia.html', {
+        'powiadomienia': lista_powiadomien,
+    })
     
 @login_required
 def platnosci(request):
@@ -1339,5 +1449,32 @@ def edytuj_zgloszenie(request, zgloszenie_id):
         'tytul': f'Edytuj zgłoszenie #{zgloszenie.id}',
         'przycisk': 'Zapisz zmiany',
         'powrot_url': reverse('szczegoly_zgloszenia', args=[zgloszenie.id]),
+    })
+    
+@login_required
+def dostawcy(request):
+    if not wymagaj_roli(request, ['magazynier', 'admin'], 'Tylko magazynier lub admin ma dostęp do dostawców.'):
+        return redirect('home')
+
+    dostawcy = Dostawca.objects.all().order_by('id')
+
+    return render(request, 'dostawcy.html', {
+        'dostawcy': dostawcy,
+    })
+    
+@login_required
+def szczegoly_zamowienia_czesci(request, zamowienie_id):
+    if not wymagaj_roli(request, ['magazynier', 'admin'], 'Tylko magazynier lub admin ma dostęp do szczegółów zamówienia części.'):
+        return redirect('home')
+
+    zamowienie = get_object_or_404(ZamowienieCzesci, id=zamowienie_id)
+
+    pozycje = PozycjaZamowienia.objects.filter(
+        zamowienie=zamowienie
+    ).select_related('czesc').order_by('id')
+
+    return render(request, 'szczegoly_zamowienia_czesci.html', {
+        'zamowienie': zamowienie,
+        'pozycje': pozycje,
     })
     

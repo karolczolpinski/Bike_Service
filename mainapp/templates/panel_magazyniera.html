@@ -30,11 +30,6 @@
         <span>Przegląd części, stanów magazynowych oraz szczegółów części.</span>
     </a>
 
-    <a href="{% url 'dodaj_czesc' %}" class="quick-card">
-        <strong>Dodaj część</strong>
-        <span>Dodanie nowej części do magazynu serwisu.</span>
-    </a>
-
     <a href="{% url 'magazyn' %}" class="quick-card">
         <strong>Magazyn</strong>
         <span>Historia przyjęć i wydań części magazynowych.</span>
@@ -44,24 +39,20 @@
         <strong>Operacja magazynowa</strong>
         <span>Przyjęcie lub wydanie części z magazynu.</span>
     </a>
-</div>
 
-<h2 class="section-title">Dostawcy i zamówienia</h2>
-
-<div class="quick-grid">
-    <a href="{% url 'dodaj_dostawce' %}" class="quick-card">
-        <strong>Dodaj dostawcę</strong>
-        <span>Dodanie nowego dostawcy części rowerowych.</span>
+    <a href="{% url 'dostawcy' %}" class="quick-card">
+        <strong>Dostawcy</strong>
+        <span>Lista dostawców części oraz możliwość dodania nowego dostawcy.</span>
     </a>
 
     <a href="{% url 'zamowienia_czesci' %}" class="quick-card">
         <strong>Zamówienia części</strong>
-        <span>Przegląd zamówień części do dostawców.</span>
+        <span>Lista zamówień części do dostawców oraz ich statusy.</span>
     </a>
-
-    <a href="{% url 'dodaj_zamowienie_czesci' %}" class="quick-card">
-        <strong>Dodaj zamówienie</strong>
-        <span>Utworzenie nowego zamówienia części.</span>
+    
+    <a href="{% url 'moje_dane' %}" class="quick-card">
+        <strong>Moje dane</strong>
+        <span>Adres, kontakt i dane profilu.</span>
     </a>
 </div>
 

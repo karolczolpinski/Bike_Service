@@ -36,6 +36,16 @@
 <h2 class="section-title">Zarządzanie systemem</h2>
 
 <div class="quick-grid">
+    <a href="{% url 'uzytkownicy_aplikacji' %}" class="quick-card">
+        <strong>Użytkownicy aplikacji</strong>
+        <span>Przegląd, szczegóły i edycja profili użytkowników.</span>
+    </a>
+	
+    <a href="/admin/" class="quick-card">
+        <strong>Django Admin</strong>
+        <span>Techniczny panel administracyjny Django.</span>
+    </a>
+
     <a href="{% url 'rowery' %}" class="quick-card">
         <strong>Rowery</strong>
         <span>Przegląd rowerów klientów.</span>
@@ -46,41 +56,25 @@
         <span>Podgląd zgłoszeń serwisowych.</span>
     </a>
 
+    <a href="{% url 'zlecenia' %}" class="quick-card">
+        <strong>Zlecenia serwisowe</strong>
+        <span>Przegląd zleceń, szczegóły napraw oraz zmiana statusów.</span>
+    </a>
+    
     <a href="{% url 'czesci' %}" class="quick-card">
         <strong>Części</strong>
         <span>Kontrola części dostępnych w systemie.</span>
     </a>
 
-    <a href="{% url 'dodaj_rower' %}" class="quick-card">
-        <strong>Dodaj rower</strong>
-        <span>Dodanie roweru klienta.</span>
-    </a>
-
-    <a href="{% url 'dodaj_zgloszenie' %}" class="quick-card">
-        <strong>Dodaj zgłoszenie</strong>
-        <span>Rejestracja zgłoszenia serwisowego.</span>
-    </a>
-
-    <a href="/admin/" class="quick-card">
-        <strong>Django Admin</strong>
-        <span>Techniczny panel administracyjny Django.</span>
+    <a href="{% url 'zamowienia_czesci' %}" class="quick-card">
+        <strong>Zamówienia części</strong>
+        <span>Kontrola zamówień do dostawców.</span>
     </a>
     
-    <a href="{% url 'dodaj_uzytkownika' %}" class="quick-card">
-    	<strong>Dodaj użytkownika</strong>
-    	<span>Utwórz konto logowania oraz przypisz rolę w aplikacji.</span>
-	</a>
-	
-	<a href="{% url 'uzytkownicy_aplikacji' %}" class="quick-card">
-        <strong>Użytkownicy aplikacji</strong>
-        <span>Przegląd, szczegóły i edycja profili użytkowników.</span>
-    </a>
-    
-    <a href="{% url 'zlecenia' %}" class="quick-card">
-        <strong>Zlecenia serwisowe</strong>
-        <span>Przegląd zleceń, szczegóły napraw oraz zmiana statusów.</span>
+    <a href="{% url 'moje_dane' %}" class="quick-card">
+        <strong>Moje dane</strong>
+        <span>Adres, kontakt i dane profilu.</span>
     </a>
 </div>
-
 
 {% endblock %}

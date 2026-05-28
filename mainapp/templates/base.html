@@ -649,6 +649,32 @@
 		        font-size: 34px;
 		    }
 		}
+		
+		.notification-link {
+            position: relative;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 10px;
+            height: 10px;
+            background: #dc2626;
+            border-radius: 50%;
+            border: 2px solid #1f2937;
+        }
+
+        .notification-count {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: #dc2626;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -677,7 +703,15 @@
 			            <a href="{% url 'panel_admin' %}">Panel admina</a>
 			        {% endif %}
 
-			        <a href="{% url 'powiadomienia' %}">Powiadomienia</a>
+			        <a href="{% url 'powiadomienia' %}" class="notification-link">
+                        Powiadomienia
+
+                        {% if liczba_nieodczytanych_powiadomien > 0 %}
+                            <span class="notification-dot"></span>
+                            <span class="notification-count">{{ liczba_nieodczytanych_powiadomien }}</span>
+                        {% endif %}
+                    </a>
+			        
 			        <a href="{% url 'moje_dane' %}">Moje dane</a>
 
 			        <div class="user-box">

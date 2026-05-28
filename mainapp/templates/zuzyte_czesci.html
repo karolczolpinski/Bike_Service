@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Zużyte części{% endblock %}
+
+{% block content %}
+
+<h2>Zużyte części</h2>
+
+<p>
+    Lista części wykorzystanych podczas napraw serwisowych.
+</p>
+
+<div class="actions">
+    <a href="{% url 'dodaj_zuzyta_czesc' %}" class="btn">Dodaj zużytą część</a>
+    <a href="{% url 'zlecenia' %}" class="btn btn-secondary">Zlecenia</a>
+    <a href="{% url 'czesci' %}" class="btn btn-secondary">Części</a>
+</div>
+
+<table>
+    <tr>
+        <th>Zlecenie</th>
+        <th>Klient</th>
+        <th>Rower</th>
+        <th>Część</th>
+        <th>Ilość</th>
+        <th>Akcje</th>
+    </tr>
+
+    {% for zc in zuzyte_czesci %}
+    <tr>
+        <td>#{{ zc.zlecenie.id }}</td>
+        <td>{{ zc.zlecenie.zgloszenie.klient }}</td>
+        <td>{{ zc.zlecenie.zgloszenie.rower }}</td>
+        <td>{{ zc.czesc }}</td>
+        <td>{{ zc.ilosc }}</td>
+        <td>
+            <a href="{% url 'szczegoly_zlecenia' zc.zlecenie.id %}" class="btn">Zlecenie</a>
+            <a href="{% url 'szczegoly_czesci' zc.czesc.id %}" class="btn">Część</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">Brak zużytych części.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

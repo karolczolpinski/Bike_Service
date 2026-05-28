@@ -20,29 +20,29 @@
         <span>Przegląd zleceń przypisanych do mechanika.</span>
     </a>
 
-    <a href="{% url 'dodaj_diagnoze' %}" class="quick-card">
-        <strong>Dodaj diagnozę</strong>
-        <span>Dodaj diagnozę do obsługiwanego zlecenia.</span>
+    <a href="{% url 'diagnozy' %}" class="quick-card">
+        <strong>Diagnozy</strong>
+        <span>Lista diagnoz oraz możliwość dodania nowej diagnozy.</span>
     </a>
 
-    <a href="{% url 'dodaj_raport' %}" class="quick-card">
-        <strong>Dodaj raport naprawy</strong>
-        <span>Opisz wykonane czynności serwisowe.</span>
+    <a href="{% url 'raporty' %}" class="quick-card">
+        <strong>Raporty napraw</strong>
+        <span>Lista raportów i opisów wykonanych czynności.</span>
     </a>
 
-    <a href="{% url 'dodaj_zuzyta_czesc' %}" class="quick-card">
-        <strong>Dodaj zużytą część</strong>
-        <span>Zarejestruj część wykorzystaną podczas naprawy.</span>
+    <a href="{% url 'zuzyte_czesci' %}" class="quick-card">
+        <strong>Zużyte części</strong>
+        <span>Lista części wykorzystanych podczas napraw.</span>
     </a>
 
     <a href="{% url 'czesci' %}" class="quick-card">
         <strong>Części</strong>
         <span>Podgląd części dostępnych w magazynie.</span>
     </a>
-
-    <a href="{% url 'powiadomienia' %}" class="quick-card">
-        <strong>Powiadomienia</strong>
-        <span>Komunikaty dotyczące pracy serwisowej.</span>
+    
+    <a href="{% url 'moje_dane' %}" class="quick-card">
+        <strong>Moje dane</strong>
+        <span>Adres, kontakt i dane profilu.</span>
     </a>
 </div>
 {% endblock %}

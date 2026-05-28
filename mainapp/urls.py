@@ -39,19 +39,17 @@ urlpatterns = [
     path('zlecenia/<int:zlecenie_id>/', views.szczegoly_zlecenia, name='szczegoly_zlecenia'),
     path('zlecenia/<int:zlecenie_id>/status/', views.zmien_status, name='zmien_status'),
 
-    path('diagnozy/dodaj/', views.dodaj_diagnoze, name='dodaj_diagnoze'),
-    path('raporty/dodaj/', views.dodaj_raport, name='dodaj_raport'),
-    path('zuzyte-czesci/dodaj/', views.dodaj_zuzyta_czesc, name='dodaj_zuzyta_czesc'),
-
     path('zamowienia-czesci/', views.zamowienia_czesci, name='zamowienia_czesci'),
     path('zamowienia-czesci/dodaj/', views.dodaj_zamowienie_czesci, name='dodaj_zamowienie_czesci'),
+    path('pozycje-zamowienia/dodaj/', views.dodaj_pozycje_zamowienia, name='dodaj_pozycje_zamowienia'),
+    path('zamowienia-czesci/<int:zamowienie_id>/', views.szczegoly_zamowienia_czesci, name='szczegoly_zamowienia_czesci'),
     
     path('powiadomienia/', views.powiadomienia, name='powiadomienia'),
     
     path('platnosci/', views.platnosci, name='platnosci'),
     path('platnosci/dodaj/', views.dodaj_platnosc, name='dodaj_platnosc'),
     
-    path('pozycje-zamowienia/dodaj/', views.dodaj_pozycje_zamowienia, name='dodaj_pozycje_zamowienia'),
+    
     
     path('moje-dane/', views.moje_dane, name='moje_dane'),
     path('moje-dane/adres/', views.edytuj_adres, name='edytuj_adres'),
@@ -62,11 +60,20 @@ urlpatterns = [
     path('zlecenia/<int:zlecenie_id>/usluga/dodaj/', views.dodaj_wykonana_usluga, name='dodaj_wykonana_usluga'),
     path('zlecenia/<int:zlecenie_id>/edytuj/', views.edytuj_zlecenie, name='edytuj_zlecenie'),
     
+    path('diagnozy/', views.diagnozy, name='diagnozy'),
+    path('raporty/', views.raporty, name='raporty'),
+    path('zuzyte-czesci/', views.zuzyte_czesci, name='zuzyte_czesci'),
+    
+    path('diagnozy/dodaj/', views.dodaj_diagnoze, name='dodaj_diagnoze'),
+    path('raporty/dodaj/', views.dodaj_raport, name='dodaj_raport'),
+    path('zuzyte-czesci/dodaj/', views.dodaj_zuzyta_czesc, name='dodaj_zuzyta_czesc'),
+    
     path('zlecenia/', views.zlecenia, name='zlecenia'),
     path('zlecenia/<int:zlecenie_id>/', views.szczegoly_zlecenia, name='szczegoly_zlecenia'),
     path('zlecenia/<int:zlecenie_id>/status/', views.zmien_status, name='zmien_status'),
     path('zlecenia/<int:zlecenie_id>/przyjmij/', views.przyjmij_zlecenie, name='przyjmij_zlecenie'),
     
+    path('dostawcy/', views.dostawcy, name='dostawcy'),
     path('dostawcy/dodaj/', views.dodaj_dostawce, name='dodaj_dostawce'),
     path('magazyn/', views.magazyn, name='magazyn'),
     path('magazyn/operacja/dodaj/', views.dodaj_operacje_magazynowa, name='dodaj_operacje_magazynowa'),

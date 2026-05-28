@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Raporty napraw{% endblock %}
+
+{% block content %}
+
+<h2>Raporty napraw</h2>
+
+<p>
+    Lista raportów napraw dodanych do zleceń serwisowych.
+</p>
+
+<div class="actions">
+    <a href="{% url 'dodaj_raport' %}" class="btn">Dodaj raport</a>
+    <a href="{% url 'zlecenia' %}" class="btn btn-secondary">Zlecenia</a>
+</div>
+
+<table>
+    <tr>
+        <th>Data</th>
+        <th>Zlecenie</th>
+        <th>Klient</th>
+        <th>Rower</th>
+        <th>Opis czynności</th>
+        <th>Akcje</th>
+    </tr>
+
+    {% for r in raporty %}
+    <tr>
+        <td>{{ r.data_raportu }}</td>
+        <td>#{{ r.zlecenie.id }}</td>
+        <td>{{ r.zlecenie.zgloszenie.klient }}</td>
+        <td>{{ r.zlecenie.zgloszenie.rower }}</td>
+        <td>{{ r.opis_czynnosci }}</td>
+        <td>
+            <a href="{% url 'szczegoly_zlecenia' r.zlecenie.id %}" class="btn">Zlecenie</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">Brak raportów napraw.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Diagnozy{% endblock %}
+
+{% block content %}
+
+<h2>Diagnozy</h2>
+
+<p>
+    Lista diagnoz przypisanych do zleceń serwisowych.
+</p>
+
+<div class="actions">
+    <a href="{% url 'dodaj_diagnoze' %}" class="btn">Dodaj diagnozę</a>
+    <a href="{% url 'zlecenia' %}" class="btn btn-secondary">Zlecenia</a>
+</div>
+
+<table>
+    <tr>
+        <th>Data</th>
+        <th>Zlecenie</th>
+        <th>Klient</th>
+        <th>Rower</th>
+        <th>Opis diagnozy</th>
+        <th>Akcje</th>
+    </tr>
+
+    {% for d in diagnozy %}
+    <tr>
+        <td>{{ d.data_diagnozy }}</td>
+        <td>#{{ d.zlecenie.id }}</td>
+        <td>{{ d.zlecenie.zgloszenie.klient }}</td>
+        <td>{{ d.zlecenie.zgloszenie.rower }}</td>
+        <td>{{ d.opis_diagnozy }}</td>
+        <td>
+            <a href="{% url 'szczegoly_zlecenia' d.zlecenie.id %}" class="btn">Zlecenie</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">Brak diagnoz.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

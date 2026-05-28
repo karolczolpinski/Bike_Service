@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Szczegóły zamówienia części{% endblock %}
+
+{% block content %}
+
+<h2>Zamówienie części #{{ zamowienie.id }}</h2>
+
+<div class="actions">
+    {% if uzytkownik_aplikacji.rola == 'magazynier' or uzytkownik_aplikacji.rola == 'admin' %}
+        <a href="{% url 'dodaj_pozycje_zamowienia' %}" class="btn">Dodaj pozycję zamówienia</a>
+    {% endif %}
+
+    <a href="{% url 'zamowienia_czesci' %}" class="btn btn-secondary">Powrót do zamówień</a>
+</div>
+
+<div class="stats">
+    <div class="card">
+        <h3>Dane zamówienia</h3>
+        <p><strong>Dostawca:</strong> {{ zamowienie.dostawca }}</p>
+        <p><strong>Data zamówienia:</strong> {{ zamowienie.data_zamowienia }}</p>
+        <p><strong>Status:</strong> <span class="badge">{{ zamowienie.status }}</span></p>
+        <p><strong>Uwagi:</strong> {{ zamowienie.uwagi|default:"-" }}</p>
+    </div>
+</div>
+
+<h2 class="section-title">Pozycje zamówienia</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Część</th>
+        <th>Ilość</th>
+        <th>Cena jednostkowa</th>
+        <th>Wartość</th>
+        <th>Akcje</th>
+    </tr>
+
+    {% for p in pozycje %}
+    <tr>
+        <td>#{{ p.id }}</td>
+        <td>{{ p.czesc }}</td>
+        <td>{{ p.ilosc }}</td>
+        <td>{{ p.cena_jednostkowa }} zł</td>
+        <td>{{ p.ilosc|floatformat:0 }} × {{ p.cena_jednostkowa }} zł</td>
+        <td>
+            <a href="{% url 'szczegoly_czesci' p.czesc.id %}" class="btn">Część</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">Brak pozycji w tym zamówieniu.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

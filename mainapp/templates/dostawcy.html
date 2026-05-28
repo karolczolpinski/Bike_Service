@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Dostawcy{% endblock %}
+
+{% block content %}
+
+<h2>Dostawcy</h2>
+
+<p>
+    Lista dostawców części rowerowych. Z tego miejsca magazynier lub administrator
+    może dodać nowego dostawcę wykorzystywanego przy zamówieniach części.
+</p>
+
+<div class="actions">
+    <a href="{% url 'dodaj_dostawce' %}" class="btn">Dodaj dostawcę</a>
+    <a href="{% url 'panel_magazyniera' %}" class="btn btn-secondary">Powrót do panelu magazyniera</a>
+</div>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Dostawca</th>
+        <th>Email</th>
+        <th>Telefon</th>
+        <th>Adres</th>
+    </tr>
+
+    {% for dostawca in dostawcy %}
+    <tr>
+        <td>#{{ dostawca.id }}</td>
+        <td>{{ dostawca }}</td>
+        <td>{{ dostawca.email|default:"-" }}</td>
+        <td>{{ dostawca.telefon|default:"-" }}</td>
+        <td>{{ dostawca.adres|default:"-" }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5">Brak dostawców.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

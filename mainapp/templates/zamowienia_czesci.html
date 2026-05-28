@@ -3,11 +3,20 @@
 {% block title %}Zamówienia części{% endblock %}
 
 {% block content %}
+
 <h2>Zamówienia części</h2>
 
+<p>
+    Lista zamówień części do dostawców. Z tego miejsca możesz utworzyć nowe
+    zamówienie albo wejść w szczegóły istniejącego zamówienia i dodać jego pozycje.
+</p>
+
 <div class="actions">
-    <a href="{% url 'dodaj_zamowienie_czesci' %}" class="btn">Dodaj zamówienie</a>
-    <a href="{% url 'dodaj_pozycje_zamowienia' %}" class="btn">Dodaj pozycję zamówienia</a>
+    {% if uzytkownik_aplikacji.rola == 'magazynier' or uzytkownik_aplikacji.rola == 'admin' %}
+        <a href="{% url 'dodaj_zamowienie_czesci' %}" class="btn">Dodaj zamówienie części</a>
+    {% endif %}
+
+    <a href="{% url 'panel_magazyniera' %}" class="btn btn-secondary">Powrót do panelu magazyniera</a>
 </div>
 
 <table>
@@ -17,20 +26,29 @@
         <th>Data zamówienia</th>
         <th>Status</th>
         <th>Uwagi</th>
+        <th>Akcje</th>
     </tr>
 
     {% for z in zamowienia %}
     <tr>
-        <td>{{ z.id }}</td>
+        <td>
+            <a href="{% url 'szczegoly_zamowienia_czesci' z.id %}">
+                #{{ z.id }}
+            </a>
+        </td>
         <td>{{ z.dostawca }}</td>
         <td>{{ z.data_zamowienia }}</td>
         <td><span class="badge">{{ z.status }}</span></td>
-        <td>{{ z.uwagi }}</td>
+        <td>{{ z.uwagi|default:"-" }}</td>
+        <td>
+            <a href="{% url 'szczegoly_zamowienia_czesci' z.id %}" class="btn">Szczegóły</a>
+        </td>
     </tr>
     {% empty %}
     <tr>
-        <td colspan="5">Brak zamówień.</td>
+        <td colspan="6">Brak zamówień.</td>
     </tr>
     {% endfor %}
 </table>
+
 {% endblock %}
