@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 
 from django.contrib.auth import login
-from django.db import transaction
+from django.db import transaction, connection
 
 from django.db.models import F
 
@@ -656,6 +656,8 @@ def szczegoly_zlecenia(request, zlecenie_id):
         messages.error(request, 'Magazynier nie ma dostępu do szczegółów zlecenia.')
         return redirect('home')
 
+    koszt_czesci_sql = oblicz_koszt_czesci_z_bazy(zlecenie.id)
+
     context = {
         'zlecenie': zlecenie,
         'diagnozy': zlecenie.diagnozy.all(),
@@ -664,6 +666,7 @@ def szczegoly_zlecenia(request, zlecenie_id):
         'platnosci': zlecenie.platnosci.all(),
         'powiadomienia': zlecenie.powiadomienia.all(),
         'historia_statusow': zlecenie.historia_statusow.all().order_by('-data_zmiany'),
+        'koszt_czesci_sql': koszt_czesci_sql,
     }
 
     return render(request, 'szczegoly_zlecenia.html', context)
@@ -1100,4 +1103,17 @@ def magazyn(request):
     return render(request, 'magazyn.html', {
         'operacje': operacje,
     })
+    
+def oblicz_koszt_czesci_z_bazy(zlecenie_id):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT oblicz_koszt_czesci(%s)",
+            [zlecenie_id]
+        )
+        wynik = cursor.fetchone()
+
+    if wynik is None:
+        return 0
+
+    return wynik[0]
     
