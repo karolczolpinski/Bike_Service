@@ -832,59 +832,7 @@ def powiadomienia(request):
     return render(request, 'powiadomienia.html', {
         'powiadomienia': lista_powiadomien,
     })
-    
-@login_required
-def platnosci(request):
-    uzytkownik = pobierz_uzytkownika_aplikacji(request)
 
-    if uzytkownik is None:
-        messages.error(request, 'Brak profilu użytkownika aplikacji.')
-        return redirect('home')
-
-    if uzytkownik.rola == 'klient':
-        platnosci = Platnosc.objects.filter(zlecenie__zgloszenie__klient=uzytkownik)
-    elif uzytkownik.rola == 'admin':
-        platnosci = Platnosc.objects.all()
-    else:
-        messages.error(request, 'Brak dostępu do płatności.')
-        return redirect('home')
-
-    return render(request, 'platnosci.html', {'platnosci': platnosci})
-
-
-@login_required
-def dodaj_platnosc(request):
-    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może dodawać płatności.'):
-        return redirect('home')
-
-    if request.method == 'POST':
-        form = PlatnoscForm(request.POST)
-
-        if form.is_valid():
-            try:
-                platnosc = form.save()
-
-                klient = platnosc.zlecenie.zgloszenie.klient
-
-                Powiadomienie.objects.create(
-                    uzytkownik=klient,
-                    tresc=f'Dodano płatność do zlecenia #{platnosc.zlecenie.id} na kwotę {platnosc.kwota} zł.'
-                )
-
-                messages.success(request, 'Płatność została dodana.')
-                return redirect('szczegoly_platnosci', platnosc_id=platnosc.id)
-
-            except DatabaseError as e:
-                messages.error(request, f'Baza danych zablokowała zapis płatności: {e}')
-    else:
-        form = PlatnoscForm()
-
-    return render(request, 'formularz.html', {
-        'form': form,
-        'tytul': 'Dodaj płatność',
-        'przycisk': 'Zapisz płatność',
-        'powrot_url': reverse('platnosci'),
-    })
     
 @login_required
 def dodaj_pozycje_zamowienia(request):
@@ -1582,17 +1530,22 @@ def dodaj_platnosc(request):
         form = PlatnoscForm(request.POST)
 
         if form.is_valid():
-            platnosc = form.save()
+            try:
+                platnosc = form.save()
 
-            klient = platnosc.zlecenie.zgloszenie.klient
+                klient = platnosc.zlecenie.zgloszenie.klient
 
-            Powiadomienie.objects.create(
-                uzytkownik=klient,
-                tresc=f'Dodano płatność do zlecenia #{platnosc.zlecenie.id} na kwotę {platnosc.kwota} zł.'
-            )
+                Powiadomienie.objects.create(
+                    uzytkownik=klient,
+                    zlecenie=platnosc.zlecenie,
+                    tresc=f'Dodano płatność do zlecenia #{platnosc.zlecenie.id} na kwotę {platnosc.kwota} zł.'
+                )
 
-            messages.success(request, 'Płatność została dodana.')
-            return redirect('szczegoly_platnosci', platnosc_id=platnosc.id)
+                messages.success(request, 'Płatność została dodana.')
+                return redirect('szczegoly_platnosci', platnosc_id=platnosc.id)
+
+            except DatabaseError as e:
+                messages.error(request, f'Baza danych zablokowała zapis płatności: {e}')
     else:
         form = PlatnoscForm()
 
@@ -1623,6 +1576,7 @@ def edytuj_platnosc(request, platnosc_id):
 
                     Powiadomienie.objects.create(
                         uzytkownik=klient,
+                        zlecenie=platnosc.zlecenie,
                         tresc=f'Status płatności dla zlecenia #{platnosc.zlecenie.id} został zmieniony na: {platnosc.status}.'
                     )
 
