@@ -16,30 +16,43 @@
     <a href="{% url 'dodaj_czesc' %}" class="btn">Dodaj część</a>
     <a href="{% url 'magazyn' %}" class="btn">Operacje magazynowe</a>
 </div>
-{% endif %}</div>
+{% endif %}
 
 <table>
     <tr>
         <th>Nazwa</th>
         <th>Stan</th>
+        <th>Stan minimalny</th>
+        <th>Wymaga zamówienia</th>
         <th>Cena</th>
         <th>Akcje</th>
     </tr>
 
     {% for czesc in czesci %}
     <tr>
-        <td>
-            {{ czesc.nazwa }}
-        </td>
+        <td>{{ czesc.nazwa }}</td>
+
         <td>{{ czesc.stan_magazynowy }}</td>
+
+        <td>{{ czesc.stan_minimalny }}</td>
+
+        <td>
+            {% if czesc.wymaga_zamowienia_sql %}
+                <span class="badge">Tak</span>
+            {% else %}
+                <span class="badge">Nie</span>
+            {% endif %}
+        </td>
+
         <td>{{ czesc.cena }} zł</td>
+
         <td>
             <a href="{% url 'szczegoly_czesci' czesc.id %}" class="btn">Szczegóły</a>
         </td>
     </tr>
     {% empty %}
     <tr>
-        <td colspan="4">Brak części</td>
+        <td colspan="6">Brak części.</td>
     </tr>
     {% endfor %}
 </table>

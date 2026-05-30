@@ -89,4 +89,10 @@ urlpatterns = [
     path('platnosci/<int:platnosc_id>/edytuj/', views.edytuj_platnosc, name='edytuj_platnosc'),
     
     path('uzytkownicy/<int:uzytkownik_id>/dezaktywuj/', views.dezaktywuj_uzytkownika, name='dezaktywuj_uzytkownika'),
+    
+    path(
+        'zamowienia-czesci/<int:zamowienie_id>/status/',
+        views.zmien_status_zamowienia_czesci,
+        name='zmien_status_zamowienia_czesci'
+    ),
 ]

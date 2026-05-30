@@ -56,6 +56,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'mainapp.context_processors.uzytkownik_aplikacji',
                 'mainapp.context_processors.powiadomienia_context',
+                'mainapp.context_processors.licznik_powiadomien',
             ],
         },
     },

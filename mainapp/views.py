@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 
 from django.contrib.auth import login
-from django.db import transaction, connection
+from django.db import transaction, connection, DatabaseError
 
 from django.db.models import F
 
@@ -270,9 +270,18 @@ def czesci(request):
     if not wymagaj_roli(request, ['mechanik', 'magazynier', 'admin'], 'Brak dostępu do magazynu części.'):
         return redirect('home')
 
-    czesci = Czesc.objects.all()
-    return render(request, 'czesci.html', {'czesci': czesci})
-    
+    czesci = list(Czesc.objects.all())
+
+    for czesc in czesci:
+        try:
+            czesc.wymaga_zamowienia_sql = czy_czesc_wymaga_zamowienia_z_bazy(czesc.id)
+        except DatabaseError:
+            czesc.wymaga_zamowienia_sql = False
+
+    return render(request, 'czesci.html', {
+        'czesci': czesci
+    })
+        
 @login_required
 def szczegoly_czesci(request, czesc_id):
     if not wymagaj_roli(request, ['mechanik', 'magazynier', 'admin'], 'Brak dostępu do szczegółów części.'):
@@ -303,9 +312,12 @@ def edytuj_czesc(request, czesc_id):
         form = CzescForm(request.POST, instance=czesc)
 
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Część została zaktualizowana.')
-            return redirect('szczegoly_czesci', czesc_id=czesc.id)
+            try:
+                form.save()
+                messages.success(request, 'Część została zaktualizowana.')
+                return redirect('szczegoly_czesci', czesc_id=czesc.id)
+            except DatabaseError as e:
+                messages.error(request, f'Baza danych zablokowała zapis części: {e}')
     else:
         form = CzescForm(instance=czesc)
 
@@ -315,7 +327,7 @@ def edytuj_czesc(request, czesc_id):
         'przycisk': 'Zapisz zmiany',
         'powrot_url': reverse('szczegoly_czesci', args=[czesc.id]),
     })
-
+    
 @login_required
 def zuzyte_czesci(request):
     uzytkownik = pobierz_uzytkownika_aplikacji(request)
@@ -726,9 +738,12 @@ def dodaj_czesc(request):
         form = CzescForm(request.POST)
 
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Część została dodana.')
-            return redirect('czesci')
+            try:
+                form.save()
+                messages.success(request, 'Część została dodana.')
+                return redirect('czesci')
+            except DatabaseError as e:
+                messages.error(request, f'Baza danych zablokowała zapis części: {e}')
     else:
         form = CzescForm()
 
@@ -809,10 +824,10 @@ def powiadomienia(request):
         uzytkownik=uzytkownik
     ).order_by('-id')
 
-    Powiadomienie.objects.filter(
-        uzytkownik=uzytkownik,
-        czy_odczytane=False
-    ).update(czy_odczytane=True)
+    try:
+        oznacz_powiadomienia_jako_odczytane_przez_procedure(uzytkownik.id)
+    except DatabaseError as e:
+        messages.error(request, f'Nie udało się oznaczyć powiadomień jako odczytane: {e}')
 
     return render(request, 'powiadomienia.html', {
         'powiadomienia': lista_powiadomien,
@@ -839,25 +854,28 @@ def platnosci(request):
 
 @login_required
 def dodaj_platnosc(request):
-    if not wymagaj_roli(request, ['admin'], 'Tylko admin może dodawać płatności.'):
+    if not wymagaj_roli(request, ['admin'], 'Tylko administrator może dodawać płatności.'):
         return redirect('home')
 
     if request.method == 'POST':
         form = PlatnoscForm(request.POST)
 
         if form.is_valid():
-            platnosc = form.save()
+            try:
+                platnosc = form.save()
 
-            klient = platnosc.zlecenie.zgloszenie.klient
+                klient = platnosc.zlecenie.zgloszenie.klient
 
-            Powiadomienie.objects.create(
-                uzytkownik=klient,
-                zlecenie=platnosc.zlecenie,
-                tresc=f'Dodano płatność do zlecenia #{platnosc.zlecenie.id} na kwotę {platnosc.kwota} zł.'
-            )
+                Powiadomienie.objects.create(
+                    uzytkownik=klient,
+                    tresc=f'Dodano płatność do zlecenia #{platnosc.zlecenie.id} na kwotę {platnosc.kwota} zł.'
+                )
 
-            messages.success(request, 'Płatność została dodana.')
-            return redirect('szczegoly_platnosci', platnosc_id=platnosc.id)
+                messages.success(request, 'Płatność została dodana.')
+                return redirect('szczegoly_platnosci', platnosc_id=platnosc.id)
+
+            except DatabaseError as e:
+                messages.error(request, f'Baza danych zablokowała zapis płatności: {e}')
     else:
         form = PlatnoscForm()
 
@@ -866,7 +884,8 @@ def dodaj_platnosc(request):
         'tytul': 'Dodaj płatność',
         'przycisk': 'Zapisz płatność',
         'powrot_url': reverse('platnosci'),
-    })    
+    })
+    
 @login_required
 def dodaj_pozycje_zamowienia(request):
     if not wymagaj_roli(request, ['magazynier', 'admin'], 'Tylko magazynier lub admin może dodawać pozycje zamówienia.'):
@@ -1150,33 +1169,37 @@ def dodaj_operacje_magazynowa(request):
         form = OperacjaMagazynowaForm(request.POST)
 
         if form.is_valid():
-            operacja = form.save(commit=False)
-            czesc = operacja.czesc
-            typ_operacji = str(operacja.typ_operacji).lower()
+            try:
+                operacja = form.save(commit=False)
+                czesc = operacja.czesc
+                typ_operacji = str(operacja.typ_operacji).lower()
 
-            if typ_operacji in ['przyjecie', 'przyjęcie', 'dostawa', 'plus']:
-                czesc.stan_magazynowy += operacja.ilosc
-                czesc.save()
+                if typ_operacji in ['przyjecie', 'przyjęcie', 'dostawa', 'plus']:
+                    czesc.stan_magazynowy += operacja.ilosc
+                    czesc.save()
+                    operacja.save()
+
+                    messages.success(request, 'Przyjęcie magazynowe zostało zapisane.')
+                    return redirect('magazyn')
+
+                if typ_operacji in ['wydanie', 'minus']:
+                    if operacja.ilosc > czesc.stan_magazynowy:
+                        messages.error(request, 'Nie można wydać więcej części niż znajduje się w magazynie.')
+                        return redirect('dodaj_operacje_magazynowa')
+
+                    czesc.stan_magazynowy -= operacja.ilosc
+                    czesc.save()
+                    operacja.save()
+
+                    messages.success(request, 'Wydanie magazynowe zostało zapisane.')
+                    return redirect('magazyn')
+
                 operacja.save()
-
-                messages.success(request, 'Przyjęcie magazynowe zostało zapisane.')
+                messages.success(request, 'Operacja magazynowa została zapisana.')
                 return redirect('magazyn')
 
-            if typ_operacji in ['wydanie', 'minus']:
-                if operacja.ilosc > czesc.stan_magazynowy:
-                    messages.error(request, 'Nie można wydać więcej części niż znajduje się w magazynie.')
-                    return redirect('dodaj_operacje_magazynowa')
-
-                czesc.stan_magazynowy -= operacja.ilosc
-                czesc.save()
-                operacja.save()
-
-                messages.success(request, 'Wydanie magazynowe zostało zapisane.')
-                return redirect('magazyn')
-
-            operacja.save()
-            messages.success(request, 'Operacja magazynowa została zapisana.')
-            return redirect('magazyn')
+            except DatabaseError as e:
+                messages.error(request, f'Baza danych zablokowała operację magazynową: {e}')
     else:
         form = OperacjaMagazynowaForm()
 
@@ -1592,18 +1615,22 @@ def edytuj_platnosc(request, platnosc_id):
         form = PlatnoscForm(request.POST, instance=platnosc)
 
         if form.is_valid():
-            platnosc = form.save()
+            try:
+                platnosc = form.save()
 
-            if platnosc.status != stary_status:
-                klient = platnosc.zlecenie.zgloszenie.klient
+                if platnosc.status != stary_status:
+                    klient = platnosc.zlecenie.zgloszenie.klient
 
-                Powiadomienie.objects.create(
-                    uzytkownik=klient,
-                    tresc=f'Status płatności dla zlecenia #{platnosc.zlecenie.id} został zmieniony na: {platnosc.status}.'
-                )
+                    Powiadomienie.objects.create(
+                        uzytkownik=klient,
+                        tresc=f'Status płatności dla zlecenia #{platnosc.zlecenie.id} został zmieniony na: {platnosc.status}.'
+                    )
 
-            messages.success(request, 'Płatność została zaktualizowana.')
-            return redirect('szczegoly_platnosci', platnosc_id=platnosc.id)
+                messages.success(request, 'Płatność została zaktualizowana.')
+                return redirect('szczegoly_platnosci', platnosc_id=platnosc.id)
+
+            except DatabaseError as e:
+                messages.error(request, f'Baza danych zablokowała zapis płatności: {e}')
     else:
         form = PlatnoscForm(instance=platnosc)
 
@@ -1666,3 +1693,69 @@ def dezaktywuj_uzytkownika(request, uzytkownik_id):
         'powrot_url': reverse('szczegoly_uzytkownika', args=[profil.id]),
     })
     
+def policz_nieodczytane_powiadomienia_z_bazy(uzytkownik_id):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT policz_nieodczytane_powiadomienia(%s)",
+            [uzytkownik_id]
+        )
+        wynik = cursor.fetchone()
+
+    if wynik is None:
+        return 0
+
+    return wynik[0]
+
+
+def czy_czesc_wymaga_zamowienia_z_bazy(czesc_id):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT czy_czesc_wymaga_zamowienia(%s)",
+            [czesc_id]
+        )
+        wynik = cursor.fetchone()
+
+    if wynik is None:
+        return False
+
+    return wynik[0]
+
+
+def oznacz_powiadomienia_jako_odczytane_przez_procedure(uzytkownik_id):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "CALL oznacz_powiadomienia_jako_odczytane_sql(%s)",
+            [uzytkownik_id]
+        )
+
+
+def ustaw_status_zamowienia_czesci_przez_procedure(zamowienie_id, status):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "CALL ustaw_status_zamowienia_czesci_sql(%s, %s)",
+            [zamowienie_id, status]
+        )
+        
+@login_required
+def zmien_status_zamowienia_czesci(request, zamowienie_id):
+    if not wymagaj_roli(request, ['magazynier', 'admin'], 'Tylko magazynier lub admin może zmieniać status zamówienia części.'):
+        return redirect('home')
+
+    zamowienie = get_object_or_404(ZamowienieCzesci, id=zamowienie_id)
+
+    if request.method == 'POST':
+        nowy_status = request.POST.get('status')
+
+        try:
+            ustaw_status_zamowienia_czesci_przez_procedure(
+                zamowienie.id,
+                nowy_status
+            )
+            messages.success(request, 'Status zamówienia części został zmieniony.')
+        except DatabaseError as e:
+            messages.error(request, f'Nie udało się zmienić statusu zamówienia: {e}')
+
+    return redirect('zamowienia_czesci')
+    
+
+

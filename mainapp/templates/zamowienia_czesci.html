@@ -8,7 +8,8 @@
 
 <p>
     Lista zamówień części do dostawców. Z tego miejsca możesz utworzyć nowe
-    zamówienie albo wejść w szczegóły istniejącego zamówienia i dodać jego pozycje.
+    zamówienie, wejść w szczegóły istniejącego zamówienia, dodać jego pozycje
+    oraz zmienić status zamówienia.
 </p>
 
 <div class="actions">
@@ -24,6 +25,7 @@
         <th>Data zamówienia</th>
         <th>Status</th>
         <th>Uwagi</th>
+        <th>Zmień status</th>
         <th>Akcje</th>
     </tr>
 
@@ -34,17 +36,44 @@
                 #{{ z.id }}
             </a>
         </td>
+
         <td>{{ z.dostawca }}</td>
+
         <td>{{ z.data_zamowienia }}</td>
-        <td><span class="badge">{{ z.status }}</span></td>
+
+        <td>
+            <span class="badge">{{ z.status }}</span>
+        </td>
+
         <td>{{ z.uwagi|default:"-" }}</td>
+
+        <td>
+            {% if uzytkownik_aplikacji.rola == 'magazynier' or uzytkownik_aplikacji.rola == 'admin' %}
+                <form method="post" action="{% url 'zmien_status_zamowienia_czesci' z.id %}" class="inline-form">
+                    {% csrf_token %}
+
+                    <select name="status">
+                        <option value="{{ z.status }}">Aktualny: {{ z.status }}</option>
+                        <option value="nowe">nowe</option>
+                        <option value="w_realizacji">w_realizacji</option>
+                        <option value="zrealizowane">zrealizowane</option>
+                        <option value="anulowane">anulowane</option>
+                    </select>
+
+                    <button type="submit" class="btn">Zmień</button>
+                </form>
+            {% else %}
+                -
+            {% endif %}
+        </td>
+
         <td>
             <a href="{% url 'szczegoly_zamowienia_czesci' z.id %}" class="btn">Szczegóły</a>
         </td>
     </tr>
     {% empty %}
     <tr>
-        <td colspan="6">Brak zamówień.</td>
+        <td colspan="7">Brak zamówień.</td>
     </tr>
     {% endfor %}
 </table>
